@@ -51,12 +51,13 @@ namespace 联通星期五
             this.autorushb = new System.Windows.Forms.Button();
             this.stopautob = new System.Windows.Forms.Button();
             this.bggetunifritime = new System.ComponentModel.BackgroundWorker();
-            this.bgautorush = new System.ComponentModel.BackgroundWorker();
             this.serverccb = new System.Windows.Forms.CheckBox();
             this.servercsckeyt = new System.Windows.Forms.TextBox();
             this.servercweb = new System.Windows.Forms.LinkLabel();
             this.getcookieb = new System.Windows.Forms.Button();
+            this.bgunifrirushonce = new System.ComponentModel.BackgroundWorker();
             this.unifriLoginUC1 = new 联通星期五.UnifriLoginUC();
+            this.bgunifrirushsuc = new System.ComponentModel.BackgroundWorker();
             this.SuspendLayout();
             // 
             // phonenuml
@@ -258,11 +259,6 @@ namespace 联通星期五
             this.bggetunifritime.WorkerSupportsCancellation = true;
             this.bggetunifritime.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BGGunifritime_DoWork);
             // 
-            // bgautorush
-            // 
-            this.bgautorush.WorkerSupportsCancellation = true;
-            this.bgautorush.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BGAutorush_DoWork);
-            // 
             // serverccb
             // 
             this.serverccb.AutoSize = true;
@@ -302,6 +298,11 @@ namespace 联通星期五
             this.getcookieb.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Getcookie_MouseDown);
             this.getcookieb.MouseEnter += new System.EventHandler(this.Getcookie_MouseEnter);
             // 
+            // bgunifrirushonce
+            // 
+            this.bgunifrirushonce.WorkerSupportsCancellation = true;
+            this.bgunifrirushonce.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BGunifrirushonce_DoWork);
+            // 
             // unifriLoginUC1
             // 
             this.unifriLoginUC1.BackColor = System.Drawing.Color.White;
@@ -312,6 +313,11 @@ namespace 联通星期五
             this.unifriLoginUC1.Size = new System.Drawing.Size(284, 136);
             this.unifriLoginUC1.TabIndex = 23;
             this.unifriLoginUC1.Visible = false;
+            // 
+            // bgunifrirushsuc
+            // 
+            this.bgunifrirushsuc.WorkerSupportsCancellation = true;
+            this.bgunifrirushsuc.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BGunifrirushsuc_DoWork);
             // 
             // UnifriMainForm
             // 
@@ -342,8 +348,9 @@ namespace 联通星期五
             this.Controls.Add(this.phonenumt);
             this.Controls.Add(this.phonenuml);
             this.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.MaximizeBox = false;
             this.Name = "UnifriMainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "联通星期五";
@@ -377,12 +384,13 @@ namespace 联通星期五
         private System.Windows.Forms.Button autorushb;
         private System.Windows.Forms.Button stopautob;
         private System.ComponentModel.BackgroundWorker bggetunifritime;
-        private System.ComponentModel.BackgroundWorker bgautorush;
         private System.Windows.Forms.CheckBox serverccb;
         private System.Windows.Forms.TextBox servercsckeyt;
         private System.Windows.Forms.LinkLabel servercweb;
         private System.Windows.Forms.Button getcookieb;
         private UnifriLoginUC unifriLoginUC1;
+        private System.ComponentModel.BackgroundWorker bgunifrirushonce;
+        private System.ComponentModel.BackgroundWorker bgunifrirushsuc;
     }
 }
 

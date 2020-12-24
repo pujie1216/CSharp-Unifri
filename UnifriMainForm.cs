@@ -220,65 +220,65 @@ namespace 联通星期五
 
         private void Get_Unifritime(out Int64 currentTime)   //获取联通时间并返回该值
         {
-            Get_goodsinfo(out String[] goodsinfo);
-            String httpors = Httpors();
-            String unifritimep = httpors + "m.client.10010.com/welfare-mall-front-activity/mobile/activity/getCurrentTimeMillis/v2";
-            HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(unifritimep);
-            httpWebRequest.Method = "GET";
-            httpWebRequest.UserAgent = "Mozilla/5.0 (Linux;Android 10;GM1910) AppleWebKit/537.36(KHTML, like Gecko) "
-                 + "Chrome / 83.0.4103.106 Mobile Safari/ 537.36; unicom{version: android@8.0002}";
-            httpWebRequest.Timeout = 2000;
-
-            String unifritimepr;
-            using (HttpWebResponse httpWebResponse = httpWebRequest.GetResponse() as HttpWebResponse)
+            try
             {
-                using (StreamReader StreamReader = new StreamReader(httpWebResponse.GetResponseStream()))
+                Get_goodsinfo(out String[] goodsinfo);
+                String httpors = Httpors();
+                String unifritimep = httpors + "m.client.10010.com/welfare-mall-front-activity/mobile/activity/getCurrentTimeMillis/v2";
+                HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(unifritimep);
+                httpWebRequest.Method = "GET";
+                httpWebRequest.UserAgent = "Mozilla/5.0 (Linux;Android 10;GM1910) AppleWebKit/537.36(KHTML, like Gecko) "
+                     + "Chrome / 83.0.4103.106 Mobile Safari/ 537.36; unicom{version: android@8.0002}";
+                httpWebRequest.Timeout = 2000;
+
+                String unifritimepr;
+                using (HttpWebResponse httpWebResponse = httpWebRequest.GetResponse() as HttpWebResponse)
                 {
-                    unifritimepr = StreamReader.ReadToEnd();
+                    using (StreamReader StreamReader = new StreamReader(httpWebResponse.GetResponseStream()))
+                    {
+                        unifritimepr = StreamReader.ReadToEnd();
+                    }
+                }
+
+                JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
+                Dictionary<String, Object> unifritimeprd = (Dictionary<String, Object>)javaScriptSerializer.DeserializeObject(unifritimepr);
+                Object resdata = unifritimeprd["resdata"];
+                Dictionary<String, Object> resdataD = (Dictionary<String, Object>)(resdata);
+                currentTime = Int64.Parse(resdataD["currentTime"].ToString());
+                Int64 currentTimets = Int64.Parse(currentTime.ToString() + "0000");
+                System.DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new System.DateTime(1970, 1, 1));
+                TimeSpan timeSpan = new TimeSpan(currentTimets);
+                if (String.Compare(startTime.Add(timeSpan).ToString("HH:mm:ss.fff"), startTime.Add(TimeSpan.FromMilliseconds(Double.Parse(goodsinfo[0]))).AddMinutes(-1).ToString("HH:mm:ss.fff")) < 0 ||
+                    String.Compare(startTime.Add(timeSpan).ToString("HH:mm:ss.fff"), startTime.Add(TimeSpan.FromMilliseconds(Double.Parse(goodsinfo[0]))).AddSeconds(3).ToString("HH:mm:ss.fff")) > 0)
+                {
+                    System.Threading.Thread.Sleep(1000);
+                    unifrit.Text = startTime.Add(timeSpan).ToString();
+                }
+                else
+                {
+                    System.Threading.Thread.Sleep(10);
+                    unifrit.Text = startTime.Add(timeSpan).ToString("yyyy-MM-dd HH:mm:ss.fff");
                 }
             }
-
-            JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
-            Dictionary<String, Object> unifritimeprd = (Dictionary<String, Object>)javaScriptSerializer.DeserializeObject(unifritimepr);
-            Object resdata = unifritimeprd["resdata"];
-            Dictionary<String, Object> resdataD = (Dictionary<String, Object>)(resdata);
-            currentTime = Int64.Parse(resdataD["currentTime"].ToString());
-            Int64 currentTimets = Int64.Parse(currentTime.ToString() + "0000");
-            System.DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new System.DateTime(1970, 1, 1));
-            TimeSpan timeSpan = new TimeSpan(currentTimets);
-            if (String.Compare(startTime.Add(timeSpan).ToString("HH:mm:ss.fff"), startTime.Add(TimeSpan.FromMilliseconds(Double.Parse(goodsinfo[0]))).AddMinutes(-1).ToString("HH:mm:ss.fff")) < 0 ||
-                String.Compare(startTime.Add(timeSpan).ToString("HH:mm:ss.fff"), startTime.Add(TimeSpan.FromMilliseconds(Double.Parse(goodsinfo[0]))).AddSeconds(3).ToString("HH:mm:ss.fff")) > 0)
+            catch (System.Net.WebException)
             {
-                System.Threading.Thread.Sleep(1000);
-                unifrit.Text = startTime.Add(timeSpan).ToString();
+                Get_Unifritime(out currentTime);
             }
-            else
+            catch (System.NullReferenceException)
             {
-                System.Threading.Thread.Sleep(10);
-                unifrit.Text = startTime.Add(timeSpan).ToString("yyyy-MM-dd HH:mm:ss.fff");
+                Get_Unifritime(out currentTime);
             }
         }
 
         private void BGGunifritime_DoWork(object sender, DoWorkEventArgs e)   //异步调用 获取联通时间
         {
-            try
+            while (!bggetunifritime.CancellationPending)
             {
-                while (!bggetunifritime.CancellationPending)
+                Get_goodsinfo(out String[] goodsinfo);
+                if (Convert.ToBoolean(goodsinfo[4]))
                 {
-                    Get_goodsinfo(out String[] goodsinfo);
-                    if (Convert.ToBoolean(goodsinfo[4]))
-                    {
-                        Get_Unifritime(out Int64 currentTime);
-                    }
+                    Get_Unifritime(out _);
                 }
-            }
-            catch (System.Net.WebException)
-            {
-                BGGunifritime_DoWork(sender, e);
-            }
-            catch (System.NullReferenceException)
-            {
-                BGGunifritime_DoWork(sender, e);
             }
         }
 
@@ -410,11 +410,22 @@ namespace 联通星期五
                     Get_Unifritime(out Int64 currentTime);
                     if (currentTime < unifrirt)
                     {
-                        outputt.AppendText("\r\n如果想修改毫秒数,请先停止后再填写,然后重新点击定时\r\n未到活动时间,正在定时...");
+                        outputt.AppendText("\r\n如果想修改参数,请先停止后再修改,然后重新点击定时\r\n未到对应的活动时间,正在定时...");
                     }
-                    if (!bgautorush.IsBusy)
+                    DialogResult dialogResult = MessageBox.Show("\r\n一次下单不成功后是否需要自动捡漏", "提示", MessageBoxButtons.YesNo);
+                    if (dialogResult == DialogResult.Yes)
                     {
-                        bgautorush.RunWorkerAsync();
+                        if (!bgunifrirushsuc.IsBusy)
+                        {
+                            bgunifrirushsuc.RunWorkerAsync();
+                        }
+                    }
+                    else
+                    {
+                        if (!bgunifrirushonce.IsBusy)
+                        {
+                            bgunifrirushonce.RunWorkerAsync();
+                        }
                     }
                 }
                 else
@@ -432,13 +443,13 @@ namespace 联通星期五
             }
         }
 
-        private void BGAutorush_DoWork(object sender, DoWorkEventArgs e)   //异步后台自动下单,直至成功后自动停止
+        private void BGunifrirushonce_DoWork(object sender, DoWorkEventArgs e)
         {
             Get_goodsinfo(out String[] goodsinfo);
             Int64 unifrirt = Int64.Parse(goodsinfo[0]) - Int32.Parse(unifriett.Text);
             Int64 unifrilm = Int64.Parse(goodsinfo[0]) - 60000;
             Get_Unifritime(out Int64 currentTime);
-            while (currentTime < unifrirt)
+            while (currentTime < unifrirt && !bgunifrirushonce.CancellationPending)
             {
                 if (currentTime >= unifrilm)
                 {
@@ -450,46 +461,69 @@ namespace 联通星期五
                 }
                 Get_Unifritime(out currentTime);
             }
-            if (!outputt.Text.Contains("正在下单或捡漏"))
+            if (!outputt.Text.Contains("正在下单"))
             {
-                outputt.AppendText("\r\n正在下单或捡漏...");
+                outputt.AppendText("\r\n正在下单...");
             }
-            if (!Int32.TryParse(unifriftimet.Text, out Int32 unifriftime))
+            if (!bgunifrirushonce.CancellationPending)
             {
-                outputt.AppendText("\r\n间隔毫秒只能填写数字,已恢复默认的5000毫秒");
-                unifriett.Text = "5000";
-                unifriftime = Int32.Parse(unifriett.Text);
+                Get_Order(out _);
             }
-            Int32 unifriftimes = 2;
-            Get_Order(out String ordermsg);
-            if (ordermsg != "下单成功")
+        }
+
+        private void BGunifrirushsuc_DoWork(object sender, DoWorkEventArgs e)
+        {
+            Get_goodsinfo(out String[] goodsinfo);
+            Int64 unifrirt = Int64.Parse(goodsinfo[0]) - Int32.Parse(unifriett.Text);
+            Int64 unifrilm = Int64.Parse(goodsinfo[0]) - 60000;
+            Get_Unifritime(out Int64 currentTime);
+            while (currentTime < unifrirt && !bgunifrirushsuc.CancellationPending)
             {
-                DialogResult dialogResult = MessageBox.Show(ordermsg + "\r\n是否需要自动捡漏", "提示", MessageBoxButtons.YesNo);
-                if (dialogResult == DialogResult.Yes)
+                if (currentTime >= unifrilm)
                 {
-                    while (ordermsg != "下单成功" && !bgautorush.CancellationPending)
-                    {
-                        if (Regex.IsMatch(ordermsg, ".*(达到上限 | 数量限制 | 次数限制).*"))
-                        {
-                            bgautorush.CancelAsync();
-                            break;
-                        }
-                        else if (ordermsg.Contains("无法购买请稍候再试"))
-                        {
-                            bgautorush.CancelAsync();
-                            break;
-                        }
-                        outputt.AppendText(String.Format("\r\n没有下单成功,将在{0}毫秒后第{1}次刷新", unifriftime, unifriftimes++));
-                        System.Threading.Thread.Sleep(unifriftime);
-                        Get_Order(out ordermsg);
-                    }
+                    System.Threading.Thread.Sleep(10);
                 }
                 else
                 {
-                    bgautorush.CancelAsync();
+                    System.Threading.Thread.Sleep(30000);
+                }
+                Get_Unifritime(out currentTime);
+            }
+            if (bgunifrirushsuc.IsBusy && !bgunifrirushsuc.CancellationPending)
+            {
+                if (!outputt.Text.Contains("正在下单或捡漏"))
+                {
+                    outputt.AppendText("\r\n正在下单或捡漏...");
+                }
+                if (!Int32.TryParse(unifriftimet.Text, out Int32 unifriftime))
+                {
+                    outputt.AppendText("\r\n间隔毫秒只能填写数字,已恢复默认的5000毫秒");
+                    unifriett.Text = "5000";
+                    unifriftime = Int32.Parse(unifriett.Text);
+                }
+                Int32 unifriftimes = 1;
+                Get_Order(out String ordermsg);
+                while (ordermsg != "下单成功" && !bgunifrirushsuc.CancellationPending)
+                {
+                    unifriftimes++;
+                    outputt.AppendText(String.Format("\r\n没有下单成功,将在{0}毫秒后第{1}次刷新", unifriftime, unifriftimes));
+                    System.Threading.Thread.Sleep(unifriftime);
+                    if (!bgunifrirushsuc.CancellationPending)
+                    {
+                        Get_Order(out ordermsg);
+                    }
+                    if (Regex.IsMatch(ordermsg, ".*(达到上限 | 数量限制 | 次数限制).*"))
+                    {
+                        bgunifrirushsuc.CancelAsync();
+                        break;
+                    }
+                    else if (ordermsg.Contains("无法购买请稍候再试"))
+                    {
+                        bgunifrirushsuc.CancelAsync();
+                        break;
+                    }
                 }
             }
-
         }
 
         private void Stopauto_MouseDown(object sender, MouseEventArgs e)
@@ -502,8 +536,15 @@ namespace 联通星期五
 
         private void Stopauto_Click()   //停止定时或捡漏
         {
-            bgautorush.CancelAsync();
-            if (bgautorush.CancellationPending && bgautorush.IsBusy)
+            if (!bgunifrirushonce.CancellationPending)
+            {
+                bgunifrirushonce.CancelAsync();
+            }
+            if (!bgunifrirushsuc.CancellationPending)
+            {
+                bgunifrirushsuc.CancelAsync();
+            }
+            if (bgunifrirushonce.CancellationPending || bgunifrirushsuc.CancellationPending)
             {
                 outputt.AppendText("\r\n定时或捡漏已停止");
             }
