@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace 联通星期五
+namespace Unifri
 {
     static class Program
     {
