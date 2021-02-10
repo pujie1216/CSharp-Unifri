@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 using System.Web.Script.Serialization;   //需要先引用System.Web.Extensions
 using System.Windows.Forms;
 
-namespace 联通星期五
+namespace Unifri
 {
 
     public partial class UnifriMainForm : Form
@@ -44,6 +44,7 @@ namespace 联通星期五
                 servercsckeyt.Text = "Paste the SCKEY";
             }
             phonenumt.Text = "Optional";
+            timeoutt.Text = "2000";
             unifriett.Text = "0";
             unifriftimet.Text = "5000";
         }
@@ -96,7 +97,7 @@ namespace 联通星期五
                     + "Chrome / 83.0.4103.106 Mobile Safari/ 537.36; unicom{version: android@8.0002}";
                 httpWebRequest.ContentType = "application/x-www-form-urlencoded;charset=UTF-8";
                 httpWebRequest.Headers.Add("Cookie", unifricookie);
-                httpWebRequest.Timeout = 2000;
+                httpWebRequest.Timeout = 5000;
 
                 String unifrigoodspr;
                 using (HttpWebResponse httpWebResponse = httpWebRequest.GetResponse() as HttpWebResponse)   //using 方法自动close
@@ -133,7 +134,15 @@ namespace 联通星期五
                             Dictionary<String, Object> goodsListD = (Dictionary<String, Object>)(goodsList1L);
                             String goodsName = goodsListD["goodsName"].ToString();
                             String goodsId = goodsListD["goodsId"].ToString();
-                            String price = goodsListD["price"].ToString() + "0";
+                            String price = goodsListD["price"].ToString();
+                            if (price.Contains("."))
+                            {
+                                price += "0";
+                            }
+                            else
+                            {
+                                price += ".00";
+                            }
                             if (!unifristate.TryGetValue(Convert.ToInt32(goodsListD["state"]), out String state))
                             {
                                 state = "未知状态";
@@ -155,7 +164,7 @@ namespace 联通星期五
                 }
                 else
                 {
-                    outputt.AppendText("\r\n" + unifrimsg + "   可能Cookie不对或者联通在维护");
+                    returnmsgt.AppendText("\r\n" + unifrimsg + "   可能Cookie不对或者联通在维护");
                 }
             }
             catch (System.Net.WebException err)   //异常捕获
@@ -176,15 +185,15 @@ namespace 联通星期五
         {
             goodsinfo = new String[5];
             Regex regex = new Regex("已选择商品为: (\\d+:\\d+).* (.*),商品ID为: (.*),商品价格为: (\\d+\\.\\d+)", RegexOptions.IgnoreCase);
-            if (regex.IsMatch(outputt.Text))
+            if (regex.IsMatch(returnmsgt.Text))
             {
-                String begintime = regex.Match(outputt.Text).Groups[1].Value;
+                String begintime = regex.Match(returnmsgt.Text).Groups[1].Value;
                 DateTime datetime = Convert.ToDateTime(begintime);
                 DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
                 goodsinfo[0] = ((Int64)(datetime - startTime).TotalMilliseconds).ToString();
-                goodsinfo[1] = regex.Match(outputt.Text).Groups[2].Value;
-                goodsinfo[2] = regex.Match(outputt.Text).Groups[3].Value;
-                goodsinfo[3] = regex.Match(outputt.Text).Groups[4].Value;
+                goodsinfo[1] = regex.Match(returnmsgt.Text).Groups[2].Value;
+                goodsinfo[2] = regex.Match(returnmsgt.Text).Groups[3].Value;
+                goodsinfo[3] = regex.Match(returnmsgt.Text).Groups[4].Value;
                 goodsinfo[4] = "true";
             }
             else
@@ -199,7 +208,7 @@ namespace 联通星期五
             if (goodslv.SelectedIndices != null && goodslv.SelectedIndices.Count > 0)
             {
                 ListView.SelectedIndexCollection s = goodslv.SelectedIndices;
-                outputt.Text = String.Format("已选择商品为: {0} {1},商品ID为: {2},商品价格为: {3}", goodslv.Items[s[0]].Text,
+                returnmsgt.Text = String.Format("已选择商品为: {0} {1},商品ID为: {2},商品价格为: {3}", goodslv.Items[s[0]].Text,
                     goodslv.Items[s[0]].SubItems[1].Text, goodslv.Items[s[0]].SubItems[2].Text, goodslv.Items[s[0]].SubItems[3].Text);
                 if (!bggetunifritime.IsBusy)
                 {
@@ -213,7 +222,7 @@ namespace 联通星期五
             if (goodslv.CheckedIndices != null && goodslv.CheckedIndices.Count > 0)
             {
                 ListView.CheckedIndexCollection c = goodslv.CheckedIndices;
-                outputt.Text = String.Format("已选择商品为: {0} {1},商品ID为: {2},商品价格为: {3}", goodslv.Items[c[0]].Text,
+                returnmsgt.Text = String.Format("已选择商品为: {0} {1},商品ID为: {2},商品价格为: {3}", goodslv.Items[c[0]].Text,
                     goodslv.Items[c[0]].SubItems[1].Text, goodslv.Items[c[0]].SubItems[2].Text, goodslv.Items[c[0]].SubItems[3].Text);
                 if (!bggetunifritime.IsBusy)
                 {
@@ -233,7 +242,7 @@ namespace 联通星期五
                 httpWebRequest.Method = "GET";
                 httpWebRequest.UserAgent = "Mozilla/5.0 (Linux;Android 10;GM1910) AppleWebKit/537.36(KHTML, like Gecko) "
                      + "Chrome / 83.0.4103.106 Mobile Safari/ 537.36; unicom{version: android@8.0002}";
-                httpWebRequest.Timeout = 2000;
+                httpWebRequest.Timeout = 5000;
 
                 String unifritimepr;
                 using (HttpWebResponse httpWebResponse = httpWebRequest.GetResponse() as HttpWebResponse)
@@ -294,16 +303,16 @@ namespace 联通星期五
             {
                 if (phone.ToString().Length != 11)
                 {
-                    outputt.AppendText("\r\n请输入正确的11位手机号哦");
+                    returnmsgt.AppendText("\r\n请输入正确的11位手机号哦");
                     phonenumt.Text = "Optional";
                     return;   //判断手机号格式是否正确,不正确则停止提交订单
                 }
                 else
                 {
                     reChangeNo = String.Format("%22reChangeNo%22%3a%22{0}%22%2c", phone.ToString());
-                    if (!outputt.Text.Contains("已输入手机号"))
+                    if (!returnmsgt.Text.Contains("已输入手机号"))
                     {
-                        outputt.AppendText("\r\n已输入手机号为: " + phone.ToString() + " ,请自行再次确认有没有输错");
+                        returnmsgt.AppendText("\r\n已输入手机号为: " + phone.ToString() + " ,请自行再次确认有没有输错");
                     }
                 }
             }
@@ -316,8 +325,8 @@ namespace 联通星期五
             {
                 String unifridata = String.Format("reqsn=&reqtime=&cliver=&reqdata=%7b%22goodsId%22%3a%22{0}%22%2c%22payWay%22%3a%2201%22%2c%22amount%22%3a%22{1}%22%2c"
                     + "{2}%22saleTypes%22%3a%22C%22%2c%22points%22%3a%220%22%2c%22beginTime%22%3a%22{3}%22%2c%22imei%22%3a%22undefined%22%2c%22sourceChannel%22%3a%22%22%2c"
-                    + "%22proFlag%22%3a%22%22%2c%22scene%22%3a%22%22%2c%22pormoterCode%22%3a%22%22%2c%22oneid%22%3a%22%22%2c%22twoid%22%3a%22%22%2c"
-                    + "%22threeid%22%3a%22%22%2c%22maxcash%22%3a%22%22%2c%22floortype%22%3a%22undefined%22%2c%22launchId%22%3a%22%22%7d",
+                    + "%22proFlag%22%3a%22%22%2c%22scene%22%3a%22%22%2c%22pormoterCode%22%3a%22%22%2c%22sign%22%3a%22%22%2c%22oneid%22%3a%22%22%2c%22twoid%22%3a%22%22%2c"
+                    + "%22threeid%22%3a%22%22%2c%22maxcash%22%3a%22%22%2c%22floortype%22%3a%22undefined%22%2c%22FLSC_PREFECTURE%22%3a%22SUPER_FRIDAY%22%2c%22launchId%22%3a%22%22%7d",
                     goodsinfo[2], goodsinfo[3], reChangeNo, goodsinfo[0]);
                 String httpors = Httpors();
                 String unifriorderp = httpors + "m.client.10010.com/welfare-mall-front/mobile/api/bj2402/v1";
@@ -330,7 +339,13 @@ namespace 联通星期五
                 httpWebRequest.Headers.Add("Cookie", unifricookie);
                 Byte[] bunifridata = Encoding.UTF8.GetBytes(unifridata);
                 httpWebRequest.ContentLength = bunifridata.Length;
-                httpWebRequest.Timeout = 2000;
+                if (!Int32.TryParse(timeoutt.Text, out Int32 timeout))
+                {
+                    returnmsgt.AppendText("\r\n网络超时只能填写数字,已恢复默认的2000毫秒");
+                    timeoutt.Text = "2000";
+                    timeout = Int32.Parse(timeoutt.Text);
+                }
+                httpWebRequest.Timeout = timeout;
 
                 using (Stream stream = httpWebRequest.GetRequestStream())   //POST方法需要传递data
                 {
@@ -351,18 +366,32 @@ namespace 联通星期五
                     JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
                     Dictionary<String, Object> unifriorderprd = (Dictionary<String, Object>)javaScriptSerializer.DeserializeObject(unifriorderpr);
                     ordermsg = unifriorderprd["msg"].ToString();
-                    outputt.AppendText("\r\n" + ordermsg);
+                    returnmsgt.AppendText("\r\n" + ordermsg);
                     if (ordermsg == "商品信息不存在")
                     {
-                        outputt.AppendText("   可能未到活动当天或商品信息有更新");
+                        returnmsgt.AppendText("   可能未到活动当天或商品信息有更新");
                     }
                     else if (ordermsg.Contains("无法购买请稍候再试"))
                     {
-                        outputt.AppendText("\r\n账号已被限制当天所有活动,请下次再参加");
+                        returnmsgt.AppendText("\r\n账号已被限制当天所有活动,请下次再参加");
+                    }
+                    else if (ordermsg.Contains("活动太火爆，请稍后再试"))
+                    {
+                        if (serverccb.Checked)
+                        {
+                            String sendserverchan = httpors + String.Format("sc.ftqq.com/{0}.send?text=账号处于半黑状态,需要过一下验证才能继续抢购哦", servercsckeyt.Text);
+                            HttpWebRequest httpWebRequests = (HttpWebRequest)WebRequest.Create(sendserverchan);
+                            _ = (HttpWebResponse)httpWebRequests.GetResponse();
+                        }
+                        MessageBox.Show("账号处于半黑状态,需要过一下验证才能继续抢购哦", "提示");
+                        unifriCaptcha1.Httpors = Httpors();
+                        unifriCaptcha1.UnifriappId = unifriorderprd["resdata"].ToString();
+                        unifriCaptcha1.Unifricookie = unifricookie;
+                        unifriCaptcha1.Visible = true;
                     }
                     if (ordermsg == "下单成功")
                     {
-                        outputt.AppendText("   请尽快在30分钟内支付,逾期将失效哦");
+                        returnmsgt.AppendText("   请尽快在30分钟内支付,逾期将失效哦");
                         if (serverccb.Checked)
                         {
                             String sendserverchan = httpors + String.Format("sc.ftqq.com/{0}.send?text={1} {2} 下单成功,请尽快在30分钟内支付,逾期将失效哦", servercsckeyt.Text, DateTime.Now.ToString("HH时mm分ss秒"), goodsinfo[1]);
@@ -373,16 +402,16 @@ namespace 联通星期五
                 }
                 catch (System.ArgumentException)
                 {
-                    outputt.AppendText("可能联通例行升级中");
+                    returnmsgt.AppendText("可能联通例行升级中");
                 }
                 catch (System.Net.WebException err)
                 {
-                    outputt.AppendText("\r\n网络出错了   " + err.Message);
+                    returnmsgt.AppendText("\r\n网络出错了   " + err.Message);
                     Get_Order(out ordermsg);
                 }
                 catch (Exception err)
                 {
-                    outputt.AppendText("\r\n未知错误   " + err.Message);
+                    returnmsgt.AppendText("\r\n未知错误   " + err.Message);
                     Get_Order(out ordermsg);
                 }
             }
@@ -402,7 +431,7 @@ namespace 联通星期五
             httpWebRequest.Headers.Add("Cookie", unifricookie);
             Byte[] bunifriwpdata = Encoding.UTF8.GetBytes(unifriwpdata);
             httpWebRequest.ContentLength = bunifriwpdata.Length;
-            httpWebRequest.Timeout = 2000;
+            httpWebRequest.Timeout = 5000;
 
             using (Stream stream = httpWebRequest.GetRequestStream())
             {
@@ -428,7 +457,7 @@ namespace 联通星期五
                 Int32 unifriwporder = Convert.ToInt32(unifriwporderCountD["wait_pay_order"]);
                 if (unifriwporder > 0)
                 {
-                    outputt.AppendText("\r\n该账号有未支付订单,请尽快支付,逾期将失效哦");
+                    returnmsgt.AppendText("\r\n该账号有未支付订单,请尽快支付,逾期将失效哦");
                     if (unifriwpreminded == 0 && serverccb.Checked)
                     {
                         String sendserverchan = httpors + String.Format("sc.ftqq.com/{0}.send?text={1} 查询到账号有未支付订单,请尽快支付,逾期将失效哦", servercsckeyt.Text, DateTime.Now.ToString("HH时mm分ss秒"));
@@ -436,14 +465,18 @@ namespace 联通星期五
                         _ = (HttpWebResponse)httpWebRequests.GetResponse();
                     }
                 }
+                else
+                {
+                    returnmsgt.AppendText("\r\n已查询未支付订单,但未发现有未支付订单,如有需要,请手动在APP查看");
+                }
             }
             catch (System.Net.WebException err)
             {
-                outputt.AppendText("\r\n网络出错了   " + err.Message);
+                returnmsgt.AppendText("\r\n网络出错了   " + err.Message);
             }
             catch (System.InvalidCastException)
             {
-                outputt.AppendText("\r\n查询未支付订单出错了,可能刷新间隔过短导致限制访问一段时间,请手动查看是否有未支付订单");
+                returnmsgt.AppendText("\r\n查询未支付订单出错了,可能刷新间隔过短导致限制访问一段时间,请手动查看是否有未支付订单");
             }
         }
 
@@ -458,11 +491,11 @@ namespace 联通星期五
         private void Manualrush_Click()   //点击按钮提交订单
         {
             Get_Order(out _);   //不引用返回值就使用下划线
-            if (outputt.Lines.Length > 100)
+            if (returnmsgt.Lines.Length > 100)
             {
-                String outputtline1 = outputt.Lines[0];
-                outputt.Clear();
-                outputt.AppendText(outputtline1);
+                String returnmsgtline1 = returnmsgt.Lines[0];
+                returnmsgt.Clear();
+                returnmsgt.AppendText(returnmsgtline1);
             }
         }
 
@@ -485,7 +518,7 @@ namespace 联通星期五
                     Get_Unifritime(out Int64 currentTime);
                     if (currentTime < unifrirt)
                     {
-                        outputt.AppendText("\r\n如果想修改参数,请先停止后再修改,然后重新点击定时\r\n未到对应的活动时间,正在定时...");
+                        returnmsgt.AppendText("\r\n如果想修改参数,请先停止后再修改,然后重新点击定时\r\n未到对应的活动时间,正在定时...");
                     }
                     DialogResult dialogResult = MessageBox.Show("\r\n一次下单不成功后是否需要自动捡漏", "提示", MessageBoxButtons.YesNo);
                     if (dialogResult == DialogResult.Yes)
@@ -507,12 +540,12 @@ namespace 联通星期五
                 {
                     if (unifriett.Text == "")
                     {
-                        outputt.AppendText("\r\n定时失败");
+                        returnmsgt.AppendText("\r\n定时失败");
                         unifriett.Text = "0";
                     }
                     else
                     {
-                        outputt.AppendText("\r\n定时失败,提前毫秒只能输入数字哦");
+                        returnmsgt.AppendText("\r\n定时失败,提前毫秒只能输入数字哦");
                     }
                 }
             }
@@ -531,9 +564,9 @@ namespace 联通星期五
             }
             if (bgunifrirushonce.IsBusy && !bgunifrirushonce.CancellationPending)
             {
-                if (!outputt.Text.Contains("正在下单"))
+                if (!returnmsgt.Text.Contains("正在下单"))
                 {
-                    outputt.AppendText("\r\n正在下单...");
+                    returnmsgt.AppendText("\r\n正在下单...");
                 }
                 Get_Order(out _);
             }
@@ -552,13 +585,13 @@ namespace 联通星期五
             }
             if (bgunifrirushsuc.IsBusy && !bgunifrirushsuc.CancellationPending)
             {
-                if (!outputt.Text.Contains("正在下单或捡漏"))
+                if (!returnmsgt.Text.Contains("正在下单或捡漏"))
                 {
-                    outputt.AppendText("\r\n正在下单或捡漏...");
+                    returnmsgt.AppendText("\r\n正在下单或捡漏...");
                 }
                 if (!Int32.TryParse(unifriftimet.Text, out Int32 unifriftime))
                 {
-                    outputt.AppendText("\r\n间隔毫秒只能填写数字,已恢复默认的5000毫秒");
+                    returnmsgt.AppendText("\r\n间隔毫秒只能填写数字,已恢复默认的5000毫秒");
                     unifriett.Text = "5000";
                     unifriftime = Int32.Parse(unifriett.Text);
                 }
@@ -567,33 +600,45 @@ namespace 联通星期五
                 Get_Order(out String ordermsg);
                 while (ordermsg != "下单成功" && !bgunifrirushsuc.CancellationPending)
                 {
-                    unifriftimes++;
-                    outputt.AppendText(String.Format("\r\n没有下单成功,将在{0}毫秒后第{1}次刷新", unifriftime, unifriftimes));
-                    System.Threading.Thread.Sleep(unifriftime);
-                    if (!bgunifrirushsuc.CancellationPending)
+                    if (unifriCaptcha1.Visible)
                     {
-                        Get_Order(out ordermsg);
+                        System.Threading.Thread.Sleep(1000);
                     }
-                    if (outputt.Lines.Length > 10)
+                    else
                     {
-                        String outputtline1 = outputt.Lines[0];
-                        outputt.Clear();
-                        outputt.AppendText(outputtline1);
-                    }
-                    if (Regex.IsMatch(ordermsg, ".*(达到上限 | 数量限制 | 次数限制).*"))
-                    {
-                        bgunifrirushsuc.CancelAsync();
-                        break;
-                    }
-                    else if (ordermsg.Contains("无法购买请稍候再试"))
-                    {
-                        bgunifrirushsuc.CancelAsync();
-                        break;
-                    }
-                    if (unifriftimes % 20 == 0)
-                    {
-                        Unifriwaitpay(ref unifriwpreminded);
-                        unifriwpreminded = 1;
+                        unifriftimes++;
+                        returnmsgt.AppendText(String.Format("\r\n没有下单成功,将在{0}毫秒后第{1}次刷新", unifriftime, unifriftimes));
+                        System.Threading.Thread.Sleep(unifriftime);
+                        if (!bgunifrirushsuc.CancellationPending)
+                        {
+                            Get_Order(out ordermsg);
+                        }
+                        if (returnmsgt.Lines.Length > 100)
+                        {
+                            String returnmsgtline1 = returnmsgt.Lines[0];
+                            returnmsgt.Clear();
+                            returnmsgt.AppendText(returnmsgtline1);
+                        }
+                        if (Regex.IsMatch(ordermsg, ".*(达到上限 | 数量限制 | 次数限制).*"))
+                        {
+                            bgunifrirushsuc.CancelAsync();
+                            break;
+                        }
+                        else if (ordermsg.Contains("无法购买请稍候再试"))
+                        {
+                            bgunifrirushsuc.CancelAsync();
+                            break;
+                        }
+                        if (!Convert.ToBoolean(goodsinfo[4]))
+                        {
+                            bgunifrirushsuc.CancelAsync();
+                            break;
+                        }
+                        if (unifriftimes % 20 == 0)
+                        {
+                            Unifriwaitpay(ref unifriwpreminded);
+                            unifriwpreminded = 1;
+                        }
                     }
                 }
             }
@@ -619,7 +664,7 @@ namespace 联通星期五
             }
             if (bgunifrirushonce.CancellationPending || bgunifrirushsuc.CancellationPending)
             {
-                outputt.AppendText("\r\n定时或捡漏已停止");
+                returnmsgt.AppendText("\r\n定时或捡漏已停止");
             }
         }
 
@@ -627,22 +672,6 @@ namespace 联通星期五
         {
             servercweb.LinkVisited = true;
             System.Diagnostics.Process.Start("http://sc.ftqq.com");
-        }
-
-        private void Getcookie_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                Getcookie_Click();
-            }
-        }
-
-        Int32 mecount = 0;
-        private void Getcookie_Click()   //点击显示登录框
-        {
-            unifriLoginUC1.Visible = true;
-            unifriLoginUC1.Httpors = Httpors();
-            mecount = 0;
         }
 
         private void Getcookie_MouseEnter(object sender, EventArgs e)   //小调皮,随机移动按钮
@@ -656,6 +685,22 @@ namespace 联通星期五
             {
                 getcookieb.Location = new System.Drawing.Point(738, 254);
             }
+        }
+
+        private void Getcookie_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                Getcookie_Click();
+            }
+        }
+
+        Int32 mecount = 0;
+        private void Getcookie_Click()   //点击显示登录框
+        {
+            unifriLoginUC1.Httpors = Httpors();
+            unifriLoginUC1.Visible = true;
+            mecount = 0;
         }
     }
 }

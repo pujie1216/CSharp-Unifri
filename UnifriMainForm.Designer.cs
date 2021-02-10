@@ -1,5 +1,5 @@
 ﻿
-namespace 联通星期五
+namespace Unifri
 {
     partial class UnifriMainForm
     {
@@ -34,7 +34,7 @@ namespace 联通星期五
             this.cookiel = new System.Windows.Forms.Label();
             this.phonenumt = new System.Windows.Forms.TextBox();
             this.getgoodslb = new System.Windows.Forms.Button();
-            this.outputt = new System.Windows.Forms.TextBox();
+            this.returnmsgt = new System.Windows.Forms.TextBox();
             this.goodslv = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -43,7 +43,7 @@ namespace 联通星期五
             this.unifritl = new System.Windows.Forms.Label();
             this.unifrit = new System.Windows.Forms.Label();
             this.manualrushb = new System.Windows.Forms.Button();
-            this.outputl = new System.Windows.Forms.Label();
+            this.returnmsgl = new System.Windows.Forms.Label();
             this.unifrietl = new System.Windows.Forms.Label();
             this.unifriett = new System.Windows.Forms.TextBox();
             this.unifriftimel = new System.Windows.Forms.Label();
@@ -56,8 +56,11 @@ namespace 联通星期五
             this.servercweb = new System.Windows.Forms.LinkLabel();
             this.getcookieb = new System.Windows.Forms.Button();
             this.bgunifrirushonce = new System.ComponentModel.BackgroundWorker();
-            this.unifriLoginUC1 = new 联通星期五.UnifriLoginUC();
             this.bgunifrirushsuc = new System.ComponentModel.BackgroundWorker();
+            this.timeoutt = new System.Windows.Forms.TextBox();
+            this.timeoutl = new System.Windows.Forms.Label();
+            this.unifriLoginUC1 = new Unifri.UnifriLoginUC();
+            this.unifriCaptcha1 = new Unifri.UnifriCaptcha();
             this.SuspendLayout();
             // 
             // phonenuml
@@ -104,17 +107,17 @@ namespace 联通星期五
             this.getgoodslb.UseVisualStyleBackColor = true;
             this.getgoodslb.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Getgoods_MouseDown);
             // 
-            // outputt
+            // returnmsgt
             // 
-            this.outputt.BackColor = System.Drawing.SystemColors.Window;
-            this.outputt.ForeColor = System.Drawing.Color.Blue;
-            this.outputt.Location = new System.Drawing.Point(209, 254);
-            this.outputt.Multiline = true;
-            this.outputt.Name = "outputt";
-            this.outputt.ReadOnly = true;
-            this.outputt.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.outputt.Size = new System.Drawing.Size(523, 92);
-            this.outputt.TabIndex = 13;
+            this.returnmsgt.BackColor = System.Drawing.SystemColors.Window;
+            this.returnmsgt.ForeColor = System.Drawing.Color.Blue;
+            this.returnmsgt.Location = new System.Drawing.Point(209, 254);
+            this.returnmsgt.Multiline = true;
+            this.returnmsgt.Name = "returnmsgt";
+            this.returnmsgt.ReadOnly = true;
+            this.returnmsgt.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.returnmsgt.Size = new System.Drawing.Size(523, 114);
+            this.returnmsgt.TabIndex = 13;
             // 
             // goodslv
             // 
@@ -184,36 +187,36 @@ namespace 联通星期五
             // 
             // manualrushb
             // 
-            this.manualrushb.Location = new System.Drawing.Point(153, 171);
+            this.manualrushb.Location = new System.Drawing.Point(152, 164);
             this.manualrushb.Name = "manualrushb";
-            this.manualrushb.Size = new System.Drawing.Size(50, 53);
+            this.manualrushb.Size = new System.Drawing.Size(50, 82);
             this.manualrushb.TabIndex = 5;
             this.manualrushb.Text = "手动抢购";
             this.manualrushb.UseVisualStyleBackColor = true;
             this.manualrushb.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Manualrush_MouseDown);
             // 
-            // outputl
+            // returnmsgl
             // 
-            this.outputl.AutoSize = true;
-            this.outputl.ForeColor = System.Drawing.Color.Red;
-            this.outputl.Location = new System.Drawing.Point(206, 234);
-            this.outputl.Name = "outputl";
-            this.outputl.Size = new System.Drawing.Size(59, 17);
-            this.outputl.TabIndex = 20;
-            this.outputl.Text = "返回信息:";
+            this.returnmsgl.AutoSize = true;
+            this.returnmsgl.ForeColor = System.Drawing.Color.Red;
+            this.returnmsgl.Location = new System.Drawing.Point(206, 234);
+            this.returnmsgl.Name = "returnmsgl";
+            this.returnmsgl.Size = new System.Drawing.Size(59, 17);
+            this.returnmsgl.TabIndex = 20;
+            this.returnmsgl.Text = "返回信息:";
             // 
             // unifrietl
             // 
             this.unifrietl.AutoSize = true;
-            this.unifrietl.Location = new System.Drawing.Point(1, 174);
+            this.unifrietl.Location = new System.Drawing.Point(0, 196);
             this.unifrietl.Name = "unifrietl";
             this.unifrietl.Size = new System.Drawing.Size(83, 17);
             this.unifrietl.TabIndex = 18;
-            this.unifrietl.Text = "提前多少毫秒:";
+            this.unifrietl.Text = "提前毫秒时间:";
             // 
             // unifriett
             // 
-            this.unifriett.Location = new System.Drawing.Point(90, 171);
+            this.unifriett.Location = new System.Drawing.Point(89, 193);
             this.unifriett.Name = "unifriett";
             this.unifriett.Size = new System.Drawing.Size(54, 23);
             this.unifriett.TabIndex = 6;
@@ -221,7 +224,7 @@ namespace 联通星期五
             // unifriftimel
             // 
             this.unifriftimel.AutoSize = true;
-            this.unifriftimel.Location = new System.Drawing.Point(1, 204);
+            this.unifriftimel.Location = new System.Drawing.Point(0, 226);
             this.unifriftimel.Name = "unifriftimel";
             this.unifriftimel.Size = new System.Drawing.Size(83, 17);
             this.unifriftimel.TabIndex = 19;
@@ -229,14 +232,14 @@ namespace 联通星期五
             // 
             // unifriftimet
             // 
-            this.unifriftimet.Location = new System.Drawing.Point(90, 201);
+            this.unifriftimet.Location = new System.Drawing.Point(89, 223);
             this.unifriftimet.Name = "unifriftimet";
             this.unifriftimet.Size = new System.Drawing.Size(54, 23);
             this.unifriftimet.TabIndex = 7;
             // 
             // autorushb
             // 
-            this.autorushb.Location = new System.Drawing.Point(4, 295);
+            this.autorushb.Location = new System.Drawing.Point(3, 317);
             this.autorushb.Name = "autorushb";
             this.autorushb.Size = new System.Drawing.Size(140, 23);
             this.autorushb.TabIndex = 10;
@@ -246,7 +249,7 @@ namespace 联通星期五
             // 
             // stopautob
             // 
-            this.stopautob.Location = new System.Drawing.Point(153, 295);
+            this.stopautob.Location = new System.Drawing.Point(152, 317);
             this.stopautob.Name = "stopautob";
             this.stopautob.Size = new System.Drawing.Size(50, 23);
             this.stopautob.TabIndex = 11;
@@ -262,7 +265,7 @@ namespace 联通星期五
             // serverccb
             // 
             this.serverccb.AutoSize = true;
-            this.serverccb.Location = new System.Drawing.Point(4, 232);
+            this.serverccb.Location = new System.Drawing.Point(3, 254);
             this.serverccb.Name = "serverccb";
             this.serverccb.Size = new System.Drawing.Size(172, 21);
             this.serverccb.TabIndex = 8;
@@ -271,7 +274,7 @@ namespace 联通星期五
             // 
             // servercsckeyt
             // 
-            this.servercsckeyt.Location = new System.Drawing.Point(4, 256);
+            this.servercsckeyt.Location = new System.Drawing.Point(3, 278);
             this.servercsckeyt.Name = "servercsckeyt";
             this.servercsckeyt.Size = new System.Drawing.Size(199, 23);
             this.servercsckeyt.TabIndex = 9;
@@ -279,7 +282,7 @@ namespace 联通星期五
             // servercweb
             // 
             this.servercweb.AutoSize = true;
-            this.servercweb.Location = new System.Drawing.Point(16, 329);
+            this.servercweb.Location = new System.Drawing.Point(15, 351);
             this.servercweb.Name = "servercweb";
             this.servercweb.Size = new System.Drawing.Size(187, 17);
             this.servercweb.TabIndex = 12;
@@ -291,7 +294,7 @@ namespace 联通星期五
             // 
             this.getcookieb.Location = new System.Drawing.Point(738, 254);
             this.getcookieb.Name = "getcookieb";
-            this.getcookieb.Size = new System.Drawing.Size(62, 92);
+            this.getcookieb.Size = new System.Drawing.Size(62, 114);
             this.getcookieb.TabIndex = 22;
             this.getcookieb.Text = "获取Cookie";
             this.getcookieb.UseVisualStyleBackColor = true;
@@ -303,30 +306,67 @@ namespace 联通星期五
             this.bgunifrirushonce.WorkerSupportsCancellation = true;
             this.bgunifrirushonce.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BGunifrirushonce_DoWork);
             // 
-            // unifriLoginUC1
-            // 
-            this.unifriLoginUC1.BackColor = System.Drawing.Color.White;
-            this.unifriLoginUC1.Httpors = null;
-            this.unifriLoginUC1.Location = new System.Drawing.Point(321, 29);
-            this.unifriLoginUC1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.unifriLoginUC1.Name = "unifriLoginUC1";
-            this.unifriLoginUC1.Size = new System.Drawing.Size(284, 136);
-            this.unifriLoginUC1.TabIndex = 23;
-            this.unifriLoginUC1.Visible = false;
-            // 
             // bgunifrirushsuc
             // 
             this.bgunifrirushsuc.WorkerSupportsCancellation = true;
             this.bgunifrirushsuc.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BGunifrirushsuc_DoWork);
+            // 
+            // timeoutt
+            // 
+            this.timeoutt.Location = new System.Drawing.Point(89, 164);
+            this.timeoutt.Name = "timeoutt";
+            this.timeoutt.Size = new System.Drawing.Size(54, 23);
+            this.timeoutt.TabIndex = 23;
+            // 
+            // timeoutl
+            // 
+            this.timeoutl.AutoSize = true;
+            this.timeoutl.Location = new System.Drawing.Point(1, 167);
+            this.timeoutl.Name = "timeoutl";
+            this.timeoutl.Size = new System.Drawing.Size(83, 17);
+            this.timeoutl.TabIndex = 24;
+            this.timeoutl.Text = "网络超时毫秒:";
+            // 
+            // unifriLoginUC1
+            // 
+            this.unifriLoginUC1.AutoScroll = true;
+            this.unifriLoginUC1.AutoSize = true;
+            this.unifriLoginUC1.BackColor = System.Drawing.Color.White;
+            this.unifriLoginUC1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.unifriLoginUC1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.unifriLoginUC1.Httpors = null;
+            this.unifriLoginUC1.Location = new System.Drawing.Point(322, 50);
+            this.unifriLoginUC1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.unifriLoginUC1.Name = "unifriLoginUC1";
+            this.unifriLoginUC1.Size = new System.Drawing.Size(287, 130);
+            this.unifriLoginUC1.TabIndex = 25;
+            this.unifriLoginUC1.Visible = false;
+            // 
+            // unifriCaptcha1
+            // 
+            this.unifriCaptcha1.BackColor = System.Drawing.Color.White;
+            this.unifriCaptcha1.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.unifriCaptcha1.Httpors = null;
+            this.unifriCaptcha1.Location = new System.Drawing.Point(385, 75);
+            this.unifriCaptcha1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.unifriCaptcha1.Name = "unifriCaptcha1";
+            this.unifriCaptcha1.Size = new System.Drawing.Size(168, 80);
+            this.unifriCaptcha1.TabIndex = 26;
+            this.unifriCaptcha1.UnifriappId = null;
+            this.unifriCaptcha1.Unifricookie = null;
+            this.unifriCaptcha1.Visible = false;
             // 
             // UnifriMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(804, 351);
+            this.ClientSize = new System.Drawing.Size(804, 372);
+            this.Controls.Add(this.unifriCaptcha1);
             this.Controls.Add(this.getcookieb);
             this.Controls.Add(this.unifriLoginUC1);
+            this.Controls.Add(this.timeoutl);
+            this.Controls.Add(this.timeoutt);
             this.Controls.Add(this.servercweb);
             this.Controls.Add(this.servercsckeyt);
             this.Controls.Add(this.serverccb);
@@ -336,12 +376,12 @@ namespace 联通星期五
             this.Controls.Add(this.unifriftimel);
             this.Controls.Add(this.unifriett);
             this.Controls.Add(this.unifrietl);
-            this.Controls.Add(this.outputl);
+            this.Controls.Add(this.returnmsgl);
             this.Controls.Add(this.manualrushb);
             this.Controls.Add(this.unifrit);
             this.Controls.Add(this.unifritl);
             this.Controls.Add(this.goodslv);
-            this.Controls.Add(this.outputt);
+            this.Controls.Add(this.returnmsgt);
             this.Controls.Add(this.getgoodslb);
             this.Controls.Add(this.cookiet);
             this.Controls.Add(this.cookiel);
@@ -367,7 +407,7 @@ namespace 联通星期五
         private System.Windows.Forms.Label cookiel;
         private System.Windows.Forms.TextBox cookiet;
         private System.Windows.Forms.Button getgoodslb;
-        private System.Windows.Forms.TextBox outputt;
+        private System.Windows.Forms.TextBox returnmsgt;
         private System.Windows.Forms.ListView goodslv;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
@@ -376,7 +416,7 @@ namespace 联通星期五
         private System.Windows.Forms.Label unifrit;
         private System.Windows.Forms.Button manualrushb;
         private System.Windows.Forms.ColumnHeader columnHeader1;
-        private System.Windows.Forms.Label outputl;
+        private System.Windows.Forms.Label returnmsgl;
         private System.Windows.Forms.Label unifrietl;
         private System.Windows.Forms.TextBox unifriett;
         private System.Windows.Forms.Label unifriftimel;
@@ -388,9 +428,12 @@ namespace 联通星期五
         private System.Windows.Forms.TextBox servercsckeyt;
         private System.Windows.Forms.LinkLabel servercweb;
         private System.Windows.Forms.Button getcookieb;
-        private UnifriLoginUC unifriLoginUC1;
         private System.ComponentModel.BackgroundWorker bgunifrirushonce;
         private System.ComponentModel.BackgroundWorker bgunifrirushsuc;
+        private System.Windows.Forms.TextBox timeoutt;
+        private System.Windows.Forms.Label timeoutl;
+        private UnifriLoginUC unifriLoginUC1;
+        private UnifriCaptcha unifriCaptcha1;
     }
 }
 
