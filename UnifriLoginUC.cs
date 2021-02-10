@@ -7,7 +7,7 @@ using System.Text;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
 
-namespace 联通星期五
+namespace Unifri
 {
     public partial class UnifriLoginUC : UserControl
     {
@@ -151,7 +151,13 @@ namespace 联通星期五
                 {
                     for (int i = 0; i < httpWebResponse.Cookies.Count; i++)
                     {
-                        unilogincookie += String.Format("{0};", httpWebResponse.Cookies[i].ToString());
+                        if (httpWebResponse.Cookies[i].ToString().Contains("cw_mutual")) { }
+                        else if (httpWebResponse.Cookies[i].ToString().Contains("u_account")) { }
+                        else if (httpWebResponse.Cookies[i].ToString().Contains("c_mobile")) { }
+                        else
+                        {
+                            unilogincookie += String.Format("{0};", httpWebResponse.Cookies[i].ToString());
+                        }
                     }
                     using (StreamReader StreamReader = new StreamReader(httpWebResponse.GetResponseStream()))
                     {

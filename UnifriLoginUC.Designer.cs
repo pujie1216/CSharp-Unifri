@@ -1,5 +1,5 @@
 ﻿
-namespace 联通星期五
+namespace Unifri
 {
     partial class UnifriLoginUC
     {
@@ -40,7 +40,7 @@ namespace 联通星期五
             // 
             // unifrisrcb
             // 
-            this.unifrisrcb.Location = new System.Drawing.Point(164, 8);
+            this.unifrisrcb.Location = new System.Drawing.Point(164, 6);
             this.unifrisrcb.Name = "unifrisrcb";
             this.unifrisrcb.Size = new System.Drawing.Size(78, 23);
             this.unifrisrcb.TabIndex = 0;
@@ -58,7 +58,7 @@ namespace 联通星期五
             // phonenuml
             // 
             this.phonenuml.AutoSize = true;
-            this.phonenuml.Location = new System.Drawing.Point(1, 14);
+            this.phonenuml.Location = new System.Drawing.Point(3, 12);
             this.phonenuml.Name = "phonenuml";
             this.phonenuml.Size = new System.Drawing.Size(47, 12);
             this.phonenuml.TabIndex = 2;
@@ -67,7 +67,7 @@ namespace 联通星期五
             // unifrircl
             // 
             this.unifrircl.AutoSize = true;
-            this.unifrircl.Location = new System.Drawing.Point(1, 40);
+            this.unifrircl.Location = new System.Drawing.Point(3, 39);
             this.unifrircl.Name = "unifrircl";
             this.unifrircl.Size = new System.Drawing.Size(71, 12);
             this.unifrircl.TabIndex = 3;
@@ -82,7 +82,7 @@ namespace 联通星期五
             // 
             // logingetckb
             // 
-            this.logingetckb.Location = new System.Drawing.Point(140, 63);
+            this.logingetckb.Location = new System.Drawing.Point(140, 61);
             this.logingetckb.Name = "logingetckb";
             this.logingetckb.Size = new System.Drawing.Size(102, 23);
             this.logingetckb.TabIndex = 5;
@@ -92,7 +92,7 @@ namespace 联通星期五
             // 
             // closeb
             // 
-            this.closeb.Location = new System.Drawing.Point(3, 63);
+            this.closeb.Location = new System.Drawing.Point(3, 61);
             this.closeb.Name = "closeb";
             this.closeb.Size = new System.Drawing.Size(47, 23);
             this.closeb.TabIndex = 6;
@@ -100,10 +100,15 @@ namespace 联通星期五
             this.closeb.UseVisualStyleBackColor = true;
             this.closeb.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Closeb_MouseDown);
             // 
-            // unifriLoginUC
+            // UnifriLoginUC
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScroll = true;
+            this.AutoSize = true;
+            this.BackColor = System.Drawing.Color.White;
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Controls.Add(this.closeb);
             this.Controls.Add(this.logingetckb);
             this.Controls.Add(this.unifrircodet);
@@ -111,8 +116,8 @@ namespace 联通星期五
             this.Controls.Add(this.phonenuml);
             this.Controls.Add(this.unifripnumt);
             this.Controls.Add(this.unifrisrcb);
-            this.Name = "unifriLoginUC";
-            this.Size = new System.Drawing.Size(250, 95);
+            this.Name = "UnifriLoginUC";
+            this.Size = new System.Drawing.Size(248, 90);
             this.ResumeLayout(false);
             this.PerformLayout();
 
