@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web.Script.Serialization;   //需要先引用System.Web.Extensions
@@ -20,36 +21,80 @@ namespace Unifri
             Icon = System.Drawing.Icon.ExtractAssociatedIcon(Application.ExecutablePath);   //调用程序图标为窗体图标,减少图标存放量,从而减少程序体积
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void MainForm_Load(object sender, EventArgs e)
         {
+
             CheckForIllegalCrossThreadCalls = false;   //忽略跨线程错误
             if (File.Exists("联通星期五.set"))
             {
                 String[] lines = File.ReadAllLines("联通星期五.set");
-                if (lines.Length == 7)
+                if (lines.Length == 13)
                 {
-                    cookiet.Text = lines[3];
-                    servercsckeyt.Text = lines[6];
+                    acIdt.Text = lines[3];
+                    cookiet.Text = lines[9];
+                    unifriaccountt.Text = lines[6];
+                    noticpatht.Text = lines[12];
+                    bgsetcheck.RunWorkerAsync();
                 }
                 else
                 {
                     MessageBox.Show("联通星期五.set的行数不对哦", "提示");
+                    acIdt.Text = "Paste the acId";
                     cookiet.Text = "Paste the Cookie";
-                    servercsckeyt.Text = "Paste the SCKEY";
+                    unifriaccountt.Text = "Unifri1";
+                    noticpatht.Text = ".";
                 }
             }
             else
             {
+                acIdt.Text = "Paste the acId";
                 cookiet.Text = "Paste the Cookie";
-                servercsckeyt.Text = "Paste the SCKEY";
+                unifriaccountt.Text = "Unifri1";
+                noticpatht.Text = ".";
             }
-            phonenumt.Text = "Optional";
+            String noticset = noticpatht.Text + "\\notic.set";
+            if (File.Exists(noticset))
+            {
+                if (File.ReadAllLines(noticset)[4] == "0")
+                {
+                    workwxr.Checked = false;
+                    barkr.Checked = false;
+                    dingtalkr.Checked = false;
+                    idorkeyt.Text = "没有选择推送通知哦";
+                }
+                else if (File.ReadAllLines(noticset)[4] == "1")
+                {
+                    workwxr.Checked = true;
+                }
+                else if (File.ReadAllLines(noticset)[4] == "2")
+                {
+                    barkr.Checked = true;
+                }
+                else if (File.ReadAllLines(noticset)[4] == "3")
+                {
+                    dingtalkr.Checked = true;
+                }
+            }
+            else
+            {
+                idorkeyt.Text = "没有 notic.set 文件,自行填写对应选择的所需ID或Key哦";
+            }
+            unifriaccountt.Text = "Unifri1";
             timeoutt.Text = "2000";
             unifriett.Text = "0";
             unifriftimet.Text = "5000";
+            if (Convert.ToDouble(Environment.OSVersion.Version.ToString().Substring(0, 3)) < 6.1)
+            {
+                MessageBox.Show("Win7以下的系统请自行打开Github查看是否有更新", "提示");
+            }
+            else
+            {
+                ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;   //解决访问Tls1.2协议的网址,否则会出错
+                Versioncheck();
+            }
         }
 
-        private static String Httpors()   //判断系统是否为Vista及以下,因为Vista及以下可能会存在https问题
+        private static String Httpors()   //判断系统是否为Win7以下,因为Win7以下可能会存在https问题
         {
             OperatingSystem os = Environment.OSVersion;
             String httpors;
@@ -62,6 +107,130 @@ namespace Unifri
                 httpors = "https://";
             }
             return httpors;
+        }
+
+        private static String Urlresp(String url, String postdata, String cookie, Int32 timeout)
+        {
+            String urlp = Httpors() + url;
+            HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(urlp);
+            httpWebRequest.UserAgent = "Mozilla/5.0 (Linux;Android 10;GM1910) AppleWebKit/537.36(KHTML, like Gecko) "
+                + "Chrome / 83.0.4103.106 Mobile Safari/ 537.36; unicom{version: android@8.0002}";
+            httpWebRequest.Timeout = timeout;
+            if (cookie != null)
+            {
+                httpWebRequest.Headers.Add("Cookie", cookie);
+            }
+            if (postdata == null)
+            {
+                httpWebRequest.Method = "GET";
+            }
+            else
+            {
+                httpWebRequest.Method = "POST";
+                if (postdata.Contains(":"))
+                {
+                    httpWebRequest.ContentType = "application/json;charset=UTF-8";
+                }
+                else
+                {
+                    httpWebRequest.ContentType = "application/x-www-form-urlencoded;charset=UTF-8";
+                }
+                Byte[] bpostdata = Encoding.UTF8.GetBytes(postdata);
+                httpWebRequest.ContentLength = bpostdata.Length;
+
+                using (Stream stream = httpWebRequest.GetRequestStream())
+                {
+                    stream.Write(bpostdata, 0, bpostdata.Length);
+                }
+            }
+
+            String urlpr;
+            using (HttpWebResponse httpWebResponse = httpWebRequest.GetResponse() as HttpWebResponse)
+            {
+                using (StreamReader StreamReader = new StreamReader(httpWebResponse.GetResponseStream()))
+                {
+                    urlpr = StreamReader.ReadToEnd();
+                }
+            }
+            return urlpr;
+        }
+
+        private void Versioncheck()
+        {
+            try
+            {
+                Version versionnow = new Version(Application.ProductVersion);
+                String versionp = "raw.githubusercontent.com/pujie1216/CSharp-Unifri/main/version.json";
+                String versionpr = Urlresp(versionp, null, null, 5000);
+                JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
+                Dictionary<String, Object> versionprd = (Dictionary<String, Object>)javaScriptSerializer.DeserializeObject(versionpr);
+                Version versionnew = new Version(versionprd["version"].ToString());
+                if (versionnew > versionnow)
+                {
+                    DialogResult dialogResult = MessageBox.Show("更新内容为:\r\n" + versionprd["changelog"].ToString() + "\r\n是否去GitHub查看更新", "检测到新版本", MessageBoxButtons.YesNo);
+                    if (dialogResult == DialogResult.Yes)
+                    {
+                        System.Diagnostics.Process.Start("https://github.com/pujie1216/CSharp-Unifri");
+                        System.Environment.Exit(0);
+                    }
+                }
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show("访问GitHub出错,跳过检测更新", err.Message);
+            }
+        }
+
+        private void BGsetcheck_DoWork(object sender, DoWorkEventArgs e)
+        {
+            SetCheck();
+        }
+
+        private void SetCheck()
+        {
+            Byte[] setsha1bnow;
+            using (Stream stream = new FileStream("联通星期五.set", FileMode.Open))
+            {
+                setsha1bnow = SHA1.Create().ComputeHash(stream);
+            }
+            DateTime tenmins = DateTime.Now.AddMinutes(10);
+            while (true)
+            {
+                DateTime dateTime = DateTime.Now;
+                if (dateTime < tenmins)
+                {
+                    Byte[] setsha1bnew;
+                    using (Stream stream = new FileStream("联通星期五.set", FileMode.Open))
+                    {
+                        setsha1bnew = SHA1.Create().ComputeHash(stream);
+                    }
+                    if (BitConverter.ToString(setsha1bnew) == BitConverter.ToString(setsha1bnow))
+                    {
+                        System.Threading.Thread.Sleep(1000);
+                    }
+                    else
+                    {
+                        DialogResult dialogResult = MessageBox.Show("检测到set文件有更改,是否重新载入set文件数据?", "提示", MessageBoxButtons.YesNo);
+                        if (dialogResult == DialogResult.Yes)
+                        {
+                            String[] lines = File.ReadAllLines("联通星期五.set");
+                            acIdt.Text = lines[3];
+                            cookiet.Text = lines[9];
+                            unifriaccountt.Text = lines[6];
+                            noticpatht.Text = lines[12];
+                        }
+                        using (Stream stream = new FileStream("联通星期五.set", FileMode.Open))
+                        {
+                            setsha1bnow = SHA1.Create().ComputeHash(stream);
+                        }
+                    }
+                }
+                else
+                {
+                    bgsetcheck.CancelAsync();
+                    break;
+                }
+            }
         }
 
         private void Getgoods_MouseDown(object sender, MouseEventArgs e)   //定义仅鼠标左键点击
@@ -78,41 +247,24 @@ namespace Unifri
             {
                 Dictionary<Int32, String> unifristate = new Dictionary<Int32, String>()
             {
-                {00,"暂未开始"},
-                {10,"立即抢购"},
-                {20,"去查看"},
+                {00,"未开始"},
+                {10,"抢购"},
+                {20,"查看"},
                 {30,"无法抢购"},
-                {40,"已抢光"},
-                {50,"未开始"},
+                {40,"抢光"},
+                {50,"待支付"},
                 {60,"处理中"}
             };
 
                 //访问活动页面
-                String httpors = Httpors();
-                String unifrigoodsp = httpors + "m.client.10010.com/welfare-mall-front-activity/mobile/activity/get619Activity/v1?whetherFriday=YES";
+                String unifrigoodsp = "m.client.10010.com/welfare-mall-front-activity/super/five/get619Activity/v1?acId=" + acIdt.Text;
                 String unifricookie = cookiet.Text;
-                HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(unifrigoodsp);
-                httpWebRequest.Method = "GET";
-                httpWebRequest.UserAgent = "Mozilla/5.0 (Linux;Android 10;GM1910) AppleWebKit/537.36(KHTML, like Gecko) "
-                    + "Chrome / 83.0.4103.106 Mobile Safari/ 537.36; unicom{version: android@8.0002}";
-                httpWebRequest.ContentType = "application/x-www-form-urlencoded;charset=UTF-8";
-                httpWebRequest.Headers.Add("Cookie", unifricookie);
-                httpWebRequest.Timeout = 5000;
-
-                String unifrigoodspr;
-                using (HttpWebResponse httpWebResponse = httpWebRequest.GetResponse() as HttpWebResponse)   //using 方法自动close
-                {
-                    using (StreamReader StreamReader = new StreamReader(httpWebResponse.GetResponseStream()))
-                    {
-                        unifrigoodspr = StreamReader.ReadToEnd();
-                    }
-                }
-
+                String unifrigoodspr = Urlresp(unifrigoodsp, null, unifricookie, 5000);
                 //获取到JSON结果,调用内置JavaScriptSerializer解析,使用Newtonsoft.Json方便一些,但是需要Nuget包,不是频繁且复杂的话处理使用内置即可
                 JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
                 Dictionary<String, Object> unifrigoodsprd = (Dictionary<String, Object>)javaScriptSerializer.DeserializeObject(unifrigoodspr);
                 String unifrimsg = unifrigoodsprd["msg"].ToString();
-                if (unifrimsg == "未登录")
+                if (Regex.IsMatch(unifrimsg, "未登录|获取用户信息异常"))
                 {
                     MessageBox.Show("联通登录状态失效了,请重新获取Cookie", unifrimsg);
                 }
@@ -231,138 +383,98 @@ namespace Unifri
             }
         }
 
-        private void Get_Unifritime(out Int64 currentTime)   //获取联通时间并返回该值
-        {
-            try
-            {
-                Get_goodsinfo(out String[] goodsinfo);
-                String httpors = Httpors();
-                String unifritimep = httpors + "m.client.10010.com/welfare-mall-front-activity/mobile/activity/getCurrentTimeMillis/v2";
-                HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(unifritimep);
-                httpWebRequest.Method = "GET";
-                httpWebRequest.UserAgent = "Mozilla/5.0 (Linux;Android 10;GM1910) AppleWebKit/537.36(KHTML, like Gecko) "
-                     + "Chrome / 83.0.4103.106 Mobile Safari/ 537.36; unicom{version: android@8.0002}";
-                httpWebRequest.Timeout = 5000;
-
-                String unifritimepr;
-                using (HttpWebResponse httpWebResponse = httpWebRequest.GetResponse() as HttpWebResponse)
-                {
-                    using (StreamReader StreamReader = new StreamReader(httpWebResponse.GetResponseStream()))
-                    {
-                        unifritimepr = StreamReader.ReadToEnd();
-                    }
-                }
-
-                JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
-                Dictionary<String, Object> unifritimeprd = (Dictionary<String, Object>)javaScriptSerializer.DeserializeObject(unifritimepr);
-                Object resdata = unifritimeprd["resdata"];
-                Dictionary<String, Object> resdataD = (Dictionary<String, Object>)(resdata);
-                currentTime = Int64.Parse(resdataD["currentTime"].ToString());
-                Int64 currentTimets = Int64.Parse(currentTime.ToString() + "0000");
-                DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
-                TimeSpan timeSpan = new TimeSpan(currentTimets);
-                if (String.Compare(startTime.Add(timeSpan).ToString("HH:mm:ss.fff"), startTime.Add(TimeSpan.FromMilliseconds(Double.Parse(goodsinfo[0]))).AddMinutes(-1).ToString("HH:mm:ss.fff")) < 0 ||
-                    String.Compare(startTime.Add(timeSpan).ToString("HH:mm:ss.fff"), startTime.Add(TimeSpan.FromMilliseconds(Double.Parse(goodsinfo[0]))).AddSeconds(3).ToString("HH:mm:ss.fff")) > 0)
-                {
-                    System.Threading.Thread.Sleep(1000);
-                    unifrit.Text = startTime.Add(timeSpan).ToString("yyyy-MM-dd HH:mm:ss");
-                }
-                else
-                {
-                    System.Threading.Thread.Sleep(10);
-                    unifrit.Text = startTime.Add(timeSpan).ToString("yyyy-MM-dd HH:mm:ss.fff");
-                }
-            }
-            catch (System.Net.WebException)
-            {
-                Get_Unifritime(out currentTime);
-            }
-            catch (System.NullReferenceException)
-            {
-                Get_Unifritime(out currentTime);
-            }
-        }
-
-        private void BGGunifritime_DoWork(object sender, DoWorkEventArgs e)   //异步调用 获取联通时间
+        private void BGGunifritime_DoWork(object sender, DoWorkEventArgs e)   //异步调用 获取时间
         {
             while (!bggetunifritime.CancellationPending)
             {
                 Get_goodsinfo(out String[] goodsinfo);
                 if (Convert.ToBoolean(goodsinfo[4]))
                 {
-                    Get_Unifritime(out _);
+                    Get_Time(out _);
                 }
+            }
+        }
+
+        private void Unifritl_MouseDown(object sender, MouseEventArgs e)   //点击时间标签切换时间源
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                if (unifritl.Text == "联通时间:")
+                {
+                    unifritl.Text = "本地时间:";
+                }
+                else
+                {
+                    unifritl.Text = "联通时间:";
+                }
+            }
+        }
+
+        private void Get_Time(out Int64 currentTime)   //获取时间并返回该值
+        {
+            currentTime = 0;
+            DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
+            Get_goodsinfo(out String[] goodsinfo);
+            if (unifritl.Text == "联通时间:")
+            {
+                try
+                {
+                    String unifritimep = "m.client.10010.com/welfare-mall-front-activity/mobile/activity/getCurrentTimeMillis/v2";
+                    String unifritimepr = Urlresp(unifritimep, null, null, 2000);
+                    JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
+                    Dictionary<String, Object> unifritimeprd = (Dictionary<String, Object>)javaScriptSerializer.DeserializeObject(unifritimepr);
+                    Object resdata = unifritimeprd["resdata"];
+                    Dictionary<String, Object> resdataD = (Dictionary<String, Object>)(resdata);
+                    currentTime = Int64.Parse(resdataD["currentTime"].ToString());
+                }
+                catch (System.Net.WebException)
+                {
+                    Get_Time(out currentTime);
+                }
+                catch (System.NullReferenceException)
+                {
+                    Get_Time(out currentTime);
+                }
+            }
+            else if (unifritl.Text == "本地时间:")
+            {
+                currentTime = (DateTime.Now.Ticks - startTime.Ticks) / 10000;
+            }
+            if (String.Compare(startTime.AddMilliseconds(currentTime).ToString("HH:mm:ss.fff"), startTime.Add(TimeSpan.FromMilliseconds(Double.Parse(goodsinfo[0]))).AddMinutes(-1).ToString("HH:mm:ss.fff")) < 0 ||
+                String.Compare(startTime.AddMilliseconds(currentTime).ToString("HH:mm:ss.fff"), startTime.Add(TimeSpan.FromMilliseconds(Double.Parse(goodsinfo[0]))).AddSeconds(3).ToString("HH:mm:ss.fff")) > 0)
+            {
+                System.Threading.Thread.Sleep(1000);
+                unifrit.Text = startTime.AddMilliseconds(currentTime).ToString("yyyy-MM-dd HH:mm:ss");
+            }
+            else
+            {
+                System.Threading.Thread.Sleep(10);
+                unifrit.Text = startTime.AddMilliseconds(currentTime).ToString("yyyy-MM-dd HH:mm:ss.fff");
             }
         }
 
         private void Get_Order(out String ordermsg)   //提交订单并返回下单状态
         {
             ordermsg = null;
-            String reChangeNo;   //reChangeNo参数已被联通删除了,一般不用提交,只是提交了也不会出错,所以才保留的
-            if (Int64.TryParse(phonenumt.Text, out Int64 phone))
-            {
-                if (phone.ToString().Length != 11)
-                {
-                    returnmsgt.AppendText("\r\n请输入正确的11位手机号哦");
-                    phonenumt.Text = "Optional";
-                    return;   //判断手机号格式是否正确,不正确则停止提交订单
-                }
-                else
-                {
-                    reChangeNo = String.Format("%22reChangeNo%22%3a%22{0}%22%2c", phone.ToString());
-                    if (!returnmsgt.Text.Contains("已输入手机号"))
-                    {
-                        returnmsgt.AppendText("\r\n已输入手机号为: " + phone.ToString() + " ,请自行再次确认有没有输错");
-                    }
-                }
-            }
-            else
-            {
-                reChangeNo = null;
-            }
             Get_goodsinfo(out String[] goodsinfo);
             if (Convert.ToBoolean(goodsinfo[4]))
             {
                 String unifridata = String.Format("reqsn=&reqtime=&cliver=&reqdata=%7b%22goodsId%22%3a%22{0}%22%2c%22payWay%22%3a%2201%22%2c%22amount%22%3a%22{1}%22%2c"
-                    + "{2}%22saleTypes%22%3a%22C%22%2c%22points%22%3a%220%22%2c%22beginTime%22%3a%22{3}%22%2c%22imei%22%3a%22undefined%22%2c%22sourceChannel%22%3a%22%22%2c"
+                    + "%22saleTypes%22%3a%22C%22%2c%22points%22%3a%220%22%2c%22beginTime%22%3a%22{2}%22%2c%22imei%22%3a%22undefined%22%2c%22sourceChannel%22%3a%22%22%2c"
                     + "%22proFlag%22%3a%22%22%2c%22scene%22%3a%22%22%2c%22pormoterCode%22%3a%22%22%2c%22sign%22%3a%22%22%2c%22oneid%22%3a%22%22%2c%22twoid%22%3a%22%22%2c"
-                    + "%22threeid%22%3a%22%22%2c%22maxcash%22%3a%22%22%2c%22floortype%22%3a%22undefined%22%2c%22FLSC_PREFECTURE%22%3a%22SUPER_FRIDAY%22%2c%22launchId%22%3a%22%22%7d",
-                    goodsinfo[2], goodsinfo[3], reChangeNo, goodsinfo[0]);
-                String httpors = Httpors();
-                String unifriorderp = httpors + "m.client.10010.com/welfare-mall-front/mobile/api/bj2402/v1";
+                    + "%22threeid%22%3a%22%22%2c%22maxcash%22%3a%22%22%2c%22floortype%22%3a%22undefined%22%2c%22FLSC_PREFECTURE%22%3a%22SUPER_FRIDAY%22%2c%22launchId%22%3a%22%22%2C%22platAcId%22%3A%22{3}%22%7d",
+                    goodsinfo[2], goodsinfo[3], goodsinfo[0], acIdt.Text);
+                String unifriorderp = "m.client.10010.com/welfare-mall-front/mobile/api/bj2402/v1";
                 String unifricookie = cookiet.Text;
-                HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(unifriorderp);
-                httpWebRequest.Method = "POST";
-                httpWebRequest.UserAgent = "Mozilla/5.0 (Linux;Android 10;GM1910) AppleWebKit/537.36(KHTML, like Gecko) "
-                    + "Chrome / 83.0.4103.106 Mobile Safari/ 537.36; unicom{version: android@8.0002}";
-                httpWebRequest.ContentType = "application/x-www-form-urlencoded;charset=UTF-8";
-                httpWebRequest.Headers.Add("Cookie", unifricookie);
-                Byte[] bunifridata = Encoding.UTF8.GetBytes(unifridata);
-                httpWebRequest.ContentLength = bunifridata.Length;
                 if (!Int32.TryParse(timeoutt.Text, out Int32 timeout))
                 {
                     returnmsgt.AppendText("\r\n网络超时只能填写数字,已恢复默认的2000毫秒");
                     timeoutt.Text = "2000";
                     timeout = Int32.Parse(timeoutt.Text);
                 }
-                httpWebRequest.Timeout = timeout;
-
-                using (Stream stream = httpWebRequest.GetRequestStream())   //POST方法需要传递data
-                {
-                    stream.Write(bunifridata, 0, bunifridata.Length);
-                }
-
                 try
                 {
-                    String unifriorderpr;
-                    using (HttpWebResponse httpWebResponse = httpWebRequest.GetResponse() as HttpWebResponse)
-                    {
-                        using (StreamReader StreamReader = new StreamReader(httpWebResponse.GetResponseStream()))
-                        {
-                            unifriorderpr = StreamReader.ReadToEnd();
-                        }
-                    }
-
+                    String unifriorderpr = Urlresp(unifriorderp, unifridata, unifricookie, timeout);
                     JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
                     Dictionary<String, Object> unifriorderprd = (Dictionary<String, Object>)javaScriptSerializer.DeserializeObject(unifriorderpr);
                     ordermsg = unifriorderprd["msg"].ToString();
@@ -373,17 +485,16 @@ namespace Unifri
                     }
                     else if (ordermsg.Contains("无法购买请稍候再试"))
                     {
-                        returnmsgt.AppendText("\r\n账号已被限制当天所有活动,请下次再参加");
+                        returnmsgt.AppendText("\r\n账号可能被限制当天活动");
                     }
-                    else if (ordermsg.Contains("活动太火爆，请稍后再试"))
+                    else if (Regex.IsMatch(ordermsg, "活动太火爆，请稍后再试|系统开小差了") && captchacb.Checked)
                     {
-                        if (serverccb.Checked)
+                        String message = unifriaccountt.Text + "处于半黑状态,需要过一下验证才能继续抢购哦";
+                        if (noticcb.Checked)
                         {
-                            String sendserverchan = httpors + String.Format("sc.ftqq.com/{0}.send?text=账号处于半黑状态,需要过一下验证才能继续抢购哦", servercsckeyt.Text);
-                            HttpWebRequest httpWebRequests = (HttpWebRequest)WebRequest.Create(sendserverchan);
-                            _ = (HttpWebResponse)httpWebRequests.GetResponse();
+                            Notification(message);
                         }
-                        MessageBox.Show("账号处于半黑状态,需要过一下验证才能继续抢购哦", "提示");
+                        MessageBox.Show(message, "提示");
                         unifriCaptcha1.Httpors = Httpors();
                         unifriCaptcha1.UnifriappId = unifriorderprd["resdata"].ToString();
                         unifriCaptcha1.Unifricookie = unifricookie;
@@ -391,18 +502,18 @@ namespace Unifri
                     }
                     if (ordermsg == "下单成功")
                     {
-                        returnmsgt.AppendText("   请尽快在30分钟内支付,逾期将失效哦");
-                        if (serverccb.Checked)
+                        String message = "   请尽快在30分钟内支付,逾期将失效哦";
+                        returnmsgt.AppendText(message);
+                        if (noticcb.Checked)
                         {
-                            String sendserverchan = httpors + String.Format("sc.ftqq.com/{0}.send?text={1} {2} 下单成功,请尽快在30分钟内支付,逾期将失效哦", servercsckeyt.Text, DateTime.Now.ToString("HH时mm分ss秒"), goodsinfo[1]);
-                            HttpWebRequest httpWebRequests = (HttpWebRequest)WebRequest.Create(sendserverchan);
-                            _ = (HttpWebResponse)httpWebRequests.GetResponse();
+                            Notification(unifriaccountt.Text + goodsinfo[1] + ordermsg + message);
                         }
                     }
                 }
                 catch (System.ArgumentException)
                 {
                     returnmsgt.AppendText("可能联通例行升级中");
+                    Get_Order(out ordermsg);
                 }
                 catch (System.Net.WebException err)
                 {
@@ -417,57 +528,36 @@ namespace Unifri
             }
         }
 
-        private void Unifriwaitpay(ref Int32 unifriwpreminded)
+        private void Unifriwaitpay(Int32 unifriwpreminded)
         {
-            String httpors = Httpors();
-            String unifriwpp = httpors + "m.client.10010.com/welfare-mall-front/mobile/show/bj3034/v1";
+            String unifriwpp = "m.client.10010.com/welfare-mall-front/mobile/api/bj2404/v1";
             String unifricookie = cookiet.Text;
-            String unifriwpdata = "reqsn=&reqtime=0&cliver=&reqdata=%7B%7D";
-            HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(unifriwpp);
-            httpWebRequest.Method = "POST";
-            httpWebRequest.UserAgent = "Mozilla/5.0 (Linux;Android 10;GM1910) AppleWebKit/537.36(KHTML, like Gecko) "
-                + "Chrome / 83.0.4103.106 Mobile Safari/ 537.36; unicom{version: android@8.0002}";
-            httpWebRequest.ContentType = "application/x-www-form-urlencoded;charset=UTF-8";
-            httpWebRequest.Headers.Add("Cookie", unifricookie);
-            Byte[] bunifriwpdata = Encoding.UTF8.GetBytes(unifriwpdata);
-            httpWebRequest.ContentLength = bunifriwpdata.Length;
-            httpWebRequest.Timeout = 5000;
-
-            using (Stream stream = httpWebRequest.GetRequestStream())
-            {
-                stream.Write(bunifriwpdata, 0, bunifriwpdata.Length);
-            }
+            String unifriwpdata = "reqsn=&reqtime=&cliver=&reqdata=%7B%22orderState%22%3A%2200%22%2C%22start%22%3A%221%22%2C%22limit%22%3A10%7D";
             try
             {
-                String unifriwppr;
-                using (HttpWebResponse httpWebResponse = httpWebRequest.GetResponse() as HttpWebResponse)
-                {
-                    using (StreamReader StreamReader = new StreamReader(httpWebResponse.GetResponseStream()))
-                    {
-                        unifriwppr = StreamReader.ReadToEnd();
-                    }
-                }
-
+                String unifriwppr = Urlresp(unifriwpp, unifriwpdata, unifricookie, 5000);
                 JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
                 Dictionary<String, Object> unifriwpprd = (Dictionary<String, Object>)javaScriptSerializer.DeserializeObject(unifriwppr);
-                Object unifriwpresdata = unifriwpprd["resdata"];
-                Dictionary<String, Object> unifriwpresdataD = (Dictionary<String, Object>)(unifriwpresdata);
-                Object unifriwporderCount = unifriwpresdataD["orderCount"];
-                Dictionary<String, Object> unifriwporderCountD = (Dictionary<String, Object>)(unifriwporderCount);
-                Int32 unifriwporder = Convert.ToInt32(unifriwporderCountD["wait_pay_order"]);
-                if (unifriwporder > 0)
+                Object[] unifriwpresdata = (Object[])unifriwpprd["resdata"];
+                if (unifriwpresdata.Length != 0)
                 {
-                    returnmsgt.AppendText("\r\n该账号有未支付订单,请尽快支付,逾期将失效哦");
-                    if (unifriwpreminded == 0 && serverccb.Checked)
+                    String message = unifriaccountt.Text + "有未支付订单,请尽快支付,逾期将失效哦";
+                    returnmsgt.AppendText("\r\n" + message);
+                    if (unifriwpreminded == 0 && noticcb.Checked)
                     {
-                        String sendserverchan = httpors + String.Format("sc.ftqq.com/{0}.send?text={1} 查询到账号有未支付订单,请尽快支付,逾期将失效哦", servercsckeyt.Text, DateTime.Now.ToString("HH时mm分ss秒"));
-                        HttpWebRequest httpWebRequests = (HttpWebRequest)WebRequest.Create(sendserverchan);
-                        _ = (HttpWebResponse)httpWebRequests.GetResponse();
+                        foreach (Object o in unifriwpresdata)
+                        {
+                            Dictionary<String, Object> goodsd = (Dictionary<String, Object>)o;
+                            Object[] goodlist = (Object[])goodsd["goodList"];
+                            Dictionary<String, Object> goods0d = (Dictionary<String, Object>)goodlist[0];
+                            String goodsname = goods0d["proName"].ToString();
+                            Notification(unifriaccountt.Text + goodsname + "待支付,请尽快支付,逾期将失效哦");
+                        }
                     }
                 }
                 else
                 {
-                    returnmsgt.AppendText("\r\n已查询未支付订单,但未发现有未支付订单,如有需要,请手动在APP查看");
+                    returnmsgt.AppendText("\r\n" + unifriaccountt.Text + "已查询未支付订单,但未发现有未支付订单,如有需要,请手动在APP查看");
                 }
             }
             catch (System.Net.WebException err)
@@ -476,7 +566,7 @@ namespace Unifri
             }
             catch (System.InvalidCastException)
             {
-                returnmsgt.AppendText("\r\n查询未支付订单出错了,可能刷新间隔过短导致限制访问一段时间,请手动查看是否有未支付订单");
+                returnmsgt.AppendText("\r\n" + unifriaccountt.Text + "查询未支付订单出错了,可能刷新间隔过短导致限制访问一段时间,请手动查看是否有未支付订单");
             }
         }
 
@@ -515,7 +605,7 @@ namespace Unifri
                 if (Int32.TryParse(unifriett.Text, out Int32 unifriet))
                 {
                     Int64 unifrirt = Int64.Parse(goodsinfo[0]) - unifriet;
-                    Get_Unifritime(out Int64 currentTime);
+                    Get_Time(out Int64 currentTime);
                     if (currentTime < unifrirt)
                     {
                         returnmsgt.AppendText("\r\n如果想修改参数,请先停止后再修改,然后重新点击定时\r\n未到对应的活动时间,正在定时...");
@@ -624,7 +714,7 @@ namespace Unifri
                             bgunifrirushsuc.CancelAsync();
                             break;
                         }
-                        else if (ordermsg.Contains("无法购买请稍候再试"))
+                        else if (ordermsg.Contains("无法购买请稍候再试") && blockrushcb.Checked)
                         {
                             bgunifrirushsuc.CancelAsync();
                             break;
@@ -636,7 +726,7 @@ namespace Unifri
                         }
                         if (unifriftimes % 20 == 0)
                         {
-                            Unifriwaitpay(ref unifriwpreminded);
+                            Unifriwaitpay(unifriwpreminded);
                             unifriwpreminded = 1;
                         }
                     }
@@ -668,12 +758,6 @@ namespace Unifri
             }
         }
 
-        private void Servercweb_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            servercweb.LinkVisited = true;
-            System.Diagnostics.Process.Start("http://sc.ftqq.com");
-        }
-
         private void Getcookie_MouseEnter(object sender, EventArgs e)   //小调皮,随机移动按钮
         {
             Random random = new Random();
@@ -701,6 +785,181 @@ namespace Unifri
             unifriLoginUC1.Httpors = Httpors();
             unifriLoginUC1.Visible = true;
             mecount = 0;
+        }
+
+        private void Notification(String message)
+        {
+            message = String.Format("{0} {1}", DateTime.Now.ToString("HH:mm:ss"), message);
+            if (workwxr.Checked)
+            {
+                returnmsgt.AppendText("\r\n当前使用 企业微信 推送通知");
+                Workwxnotic(message);
+            }
+            else if (barkr.Checked)
+            {
+                returnmsgt.AppendText("\r\n当前使用 Bark 推送通知");
+                Barknotic(message);
+            }
+            else if (dingtalkr.Checked)
+            {
+                returnmsgt.AppendText("\r\n当前使用 钉钉 推送通知");
+                Dingtalknotic(message);
+            }
+        }
+
+        private void Workwxnotic(String message)
+        {
+            String[] workwxidarr = idorkeyt.Text.Split(new char[1] { '.' });
+            String corpid = workwxidarr[0];
+            String corpsecret = workwxidarr[1];
+            String agentid = workwxidarr[2];
+            String tokenpath = noticpatht.Text + "\\workwx.token";
+            String access_token;
+            if (File.Exists(tokenpath))
+            {
+                DateTime tokencretime = new FileInfo(tokenpath).LastWriteTime;
+                DateTime tokenexptime = tokencretime.AddHours(2);
+                if (DateTime.Now < tokenexptime)
+                {
+                    returnmsgt.AppendText("\r\n企业微信的本地token还在有效期内,继续使用");
+                    access_token = File.ReadAllText(tokenpath);
+                }
+                else
+                {
+                    returnmsgt.AppendText("\r\n企业微信的本地token可能已过期,正在自动重新获取");
+                    access_token = GetWorkwxtoken(corpid, corpsecret);
+                    if (access_token == "")
+                    {
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                access_token = GetWorkwxtoken(corpid, corpsecret);
+                if (access_token == "")
+                {
+                    return;
+                }
+            }
+            SendWorkwxmsg(agentid, access_token, message);
+        }
+
+        private String GetWorkwxtoken(String corpid, String corpsecret)
+        {
+            String access_token = "";
+            String gettokenp = "qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=" + corpid + "&corpsecret=" + corpsecret;
+            String gettokenpr = Urlresp(gettokenp, null, null, 5000);
+            JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
+            Dictionary<String, Object> gettokenprd = (Dictionary<String, Object>)javaScriptSerializer.DeserializeObject(gettokenpr);
+            if (gettokenprd["errcode"].ToString() == "0")
+            {
+                access_token = gettokenprd["access_token"].ToString();
+                using (StreamWriter streamWriter = new StreamWriter("workwx.token"))
+                {
+                    streamWriter.Write(access_token);
+                }
+                returnmsgt.AppendText("\r\n企业微信的token已本地记录");
+            }
+            else
+            {
+                returnmsgt.AppendText("\r\n企业微信的token获取失败: " + gettokenprd["errmsg"].ToString());
+            }
+            return access_token;
+        }
+
+        private void SendWorkwxmsg(String agentid, String access_token, String message)
+        {
+            String workwxdata = String.Format("{{\"touser\":\"@all\",\"msgtype\":\"text\",\"agentid\":\"{0}\",\"text\":{{\"content\":\"{1}\"}}}}", agentid, message);
+            String sendmsgp = "qyapi.weixin.qq.com/cgi-bin/message/send?access_token=" + access_token;
+            String sendmsgpr = Urlresp(sendmsgp, workwxdata, null, 5000);
+            JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
+            Dictionary<String, Object> sendmsgprd = (Dictionary<String, Object>)javaScriptSerializer.DeserializeObject(sendmsgpr);
+            if (sendmsgprd["errcode"].ToString() == "0")
+            {
+                returnmsgt.AppendText("\r\n企业微信的推送消息发送成功");
+            }
+            else
+            {
+                returnmsgt.AppendText("\r\n企业微信的推送消息发送失败: " + sendmsgprd["errmsg"].ToString());
+            }
+        }
+
+        private void Barknotic(String message)
+        {
+            String barkey = idorkeyt.Text;
+            String sendmsgp = String.Format("api.day.app/{0}/{1}", barkey, message);
+            try
+            {
+                String sendmsgpr = Urlresp(sendmsgp, null, null, 5000);
+                returnmsgt.AppendText("\r\nBark的推送消息已发送,如果没有收到,检查Barkey是否填写错误");
+            }
+            catch (Exception err)
+            {
+                returnmsgt.AppendText("\r\nBark的推送消息发送失败: " + err.Message);
+            }
+        }
+
+        private void Dingtalknotic(String message)
+        {
+            String[] dingtalkkeyarr = idorkeyt.Text.Split(new char[1] { '.' });
+            String keyword = dingtalkkeyarr[0];
+            String access_token = dingtalkkeyarr[1];
+            String dingtalkdata = String.Format("{{\"msgtype\":\"text\",\"text\":{{\"content\": \"{0}\\n{1}\"}}}}", keyword, message);
+            String sendmsgp = "oapi.dingtalk.com/robot/send?access_token=" + access_token;
+            String sendmsgpr = Urlresp(sendmsgp, dingtalkdata, null, 5000);
+            JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
+            Dictionary<String, Object> sendmsgprd = (Dictionary<String, Object>)javaScriptSerializer.DeserializeObject(sendmsgpr);
+            if (sendmsgprd["errcode"].ToString() == "0")
+            {
+                returnmsgt.AppendText("\r\n钉钉的推送消息发送成功");
+            }
+            else
+            {
+                returnmsgt.AppendText("\r\n钉钉的推送消息发送失败: " + sendmsgprd["errmsg"].ToString());
+            }
+        }
+
+        private void Workwxr_CheckedChanged(object sender, EventArgs e)
+        {
+            if (workwxr.Checked)
+            {
+                if (File.Exists(noticpatht.Text + "\\notic.set"))
+                {
+                    idorkeyt.Text = File.ReadAllLines(noticpatht.Text + "\\notic.set")[7];
+                }
+                else
+                {
+                    idorkeyt.Text = "按照 企业ID(cropid).应用Secret(corpsecret).应用ID(agentid) 的顺序格式覆盖填写,以 . 分隔";
+                }
+            }
+        }
+
+        private void Barkr_CheckedChanged(object sender, EventArgs e)
+        {
+            if (barkr.Checked)
+            {
+                if (File.Exists(noticpatht.Text + "\\notic.set"))
+                {
+                    idorkeyt.Text = File.ReadAllLines(noticpatht.Text + "\\notic.set")[10];
+                }
+                else
+                {
+                    idorkeyt.Text = "覆盖填写Bark应用的地址里两撇之间最长的那串字符";
+                }
+            }
+        }
+
+        private void Dingtalkr_CheckedChanged(object sender, EventArgs e)
+        {
+            if (File.Exists(noticpatht.Text + "\\notic.set"))
+            {
+                idorkeyt.Text = File.ReadAllLines(noticpatht.Text + "\\notic.set")[13] + "." + File.ReadAllLines(noticpatht.Text + "\\notic.set")[14];
+            }
+            else
+            {
+                idorkeyt.Text = "按照 关键字.token 的顺序格式覆盖填写,因为以 . 分隔,所以关键字里不能带 .";
+            }
         }
     }
 }
