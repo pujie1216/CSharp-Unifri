@@ -78,7 +78,7 @@ namespace Unifri
 
         private void Captchab_Click()
         {
-            String riskp = Httpors + "act.10010.com/riskService?appId=" + UnifriappId + "&method=check&riskCode=image&checkCode=" + captchat.Text;
+            String riskp = Httpors + "act.10010.com/riskService?appId=" + UnifriappId + "&method=check&riskCode=image&checkCode=" + captchat.Text + "&systemCode=19991";
             Stream riskps = HttpWebGet(riskp);
 
             String riskpr;
