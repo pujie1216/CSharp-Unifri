@@ -32,7 +32,7 @@ namespace Unifri
             this.phonenuml = new System.Windows.Forms.Label();
             this.cookiet = new System.Windows.Forms.TextBox();
             this.cookiel = new System.Windows.Forms.Label();
-            this.phonenumt = new System.Windows.Forms.TextBox();
+            this.unifriaccountt = new System.Windows.Forms.TextBox();
             this.getgoodslb = new System.Windows.Forms.Button();
             this.returnmsgt = new System.Windows.Forms.TextBox();
             this.goodslv = new System.Windows.Forms.ListView();
@@ -51,30 +51,38 @@ namespace Unifri
             this.autorushb = new System.Windows.Forms.Button();
             this.stopautob = new System.Windows.Forms.Button();
             this.bggetunifritime = new System.ComponentModel.BackgroundWorker();
-            this.serverccb = new System.Windows.Forms.CheckBox();
-            this.servercsckeyt = new System.Windows.Forms.TextBox();
-            this.servercweb = new System.Windows.Forms.LinkLabel();
+            this.noticcb = new System.Windows.Forms.CheckBox();
             this.getcookieb = new System.Windows.Forms.Button();
             this.bgunifrirushonce = new System.ComponentModel.BackgroundWorker();
             this.bgunifrirushsuc = new System.ComponentModel.BackgroundWorker();
             this.timeoutt = new System.Windows.Forms.TextBox();
             this.timeoutl = new System.Windows.Forms.Label();
-            this.unifriLoginUC1 = new Unifri.UnifriLoginUC();
+            this.acIdl = new System.Windows.Forms.Label();
+            this.acIdt = new System.Windows.Forms.TextBox();
+            this.workwxr = new System.Windows.Forms.RadioButton();
+            this.barkr = new System.Windows.Forms.RadioButton();
+            this.dingtalkr = new System.Windows.Forms.RadioButton();
+            this.idorkeyt = new System.Windows.Forms.TextBox();
+            this.blockrushcb = new System.Windows.Forms.CheckBox();
+            this.captchacb = new System.Windows.Forms.CheckBox();
+            this.noticpatht = new System.Windows.Forms.TextBox();
+            this.bgsetcheck = new System.ComponentModel.BackgroundWorker();
             this.unifriCaptcha1 = new Unifri.UnifriCaptcha();
+            this.unifriLoginUC1 = new Unifri.UnifriLoginUC();
             this.SuspendLayout();
             // 
             // phonenuml
             // 
             this.phonenuml.AutoSize = true;
-            this.phonenuml.Location = new System.Drawing.Point(1, 99);
+            this.phonenuml.Location = new System.Drawing.Point(2, 123);
             this.phonenuml.Name = "phonenuml";
             this.phonenuml.Size = new System.Drawing.Size(44, 34);
             this.phonenuml.TabIndex = 15;
-            this.phonenuml.Text = "手机号\r\n 选填";
+            this.phonenuml.Text = "手机号\r\n仅区分";
             // 
             // cookiet
             // 
-            this.cookiet.Location = new System.Drawing.Point(59, 3);
+            this.cookiet.Location = new System.Drawing.Point(60, 31);
             this.cookiet.Multiline = true;
             this.cookiet.Name = "cookiet";
             this.cookiet.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -84,22 +92,22 @@ namespace Unifri
             // cookiel
             // 
             this.cookiel.AutoSize = true;
-            this.cookiel.Location = new System.Drawing.Point(1, 6);
+            this.cookiel.Location = new System.Drawing.Point(2, 34);
             this.cookiel.Name = "cookiel";
             this.cookiel.Size = new System.Drawing.Size(52, 17);
             this.cookiel.TabIndex = 14;
             this.cookiel.Text = "Cookie:";
             // 
-            // phonenumt
+            // unifriaccountt
             // 
-            this.phonenumt.Location = new System.Drawing.Point(54, 104);
-            this.phonenumt.Name = "phonenumt";
-            this.phonenumt.Size = new System.Drawing.Size(144, 23);
-            this.phonenumt.TabIndex = 2;
+            this.unifriaccountt.Location = new System.Drawing.Point(60, 132);
+            this.unifriaccountt.Name = "unifriaccountt";
+            this.unifriaccountt.Size = new System.Drawing.Size(144, 23);
+            this.unifriaccountt.TabIndex = 2;
             // 
             // getgoodslb
             // 
-            this.getgoodslb.Location = new System.Drawing.Point(4, 26);
+            this.getgoodslb.Location = new System.Drawing.Point(5, 54);
             this.getgoodslb.Name = "getgoodslb";
             this.getgoodslb.Size = new System.Drawing.Size(49, 66);
             this.getgoodslb.TabIndex = 3;
@@ -116,7 +124,7 @@ namespace Unifri
             this.returnmsgt.Name = "returnmsgt";
             this.returnmsgt.ReadOnly = true;
             this.returnmsgt.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.returnmsgt.Size = new System.Drawing.Size(523, 114);
+            this.returnmsgt.Size = new System.Drawing.Size(523, 154);
             this.returnmsgt.TabIndex = 13;
             // 
             // goodslv
@@ -169,29 +177,30 @@ namespace Unifri
             // 
             this.unifritl.AutoSize = true;
             this.unifritl.ForeColor = System.Drawing.Color.Blue;
-            this.unifritl.Location = new System.Drawing.Point(1, 141);
+            this.unifritl.Location = new System.Drawing.Point(3, 169);
             this.unifritl.Name = "unifritl";
             this.unifritl.Size = new System.Drawing.Size(59, 17);
             this.unifritl.TabIndex = 16;
-            this.unifritl.Text = "联通时间:";
+            this.unifritl.Text = "本地时间:";
+            this.unifritl.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Unifritl_MouseDown);
             // 
             // unifrit
             // 
             this.unifrit.AutoSize = true;
             this.unifrit.ForeColor = System.Drawing.Color.Blue;
-            this.unifrit.Location = new System.Drawing.Point(56, 141);
+            this.unifrit.Location = new System.Drawing.Point(58, 169);
             this.unifrit.Name = "unifrit";
-            this.unifrit.Size = new System.Drawing.Size(140, 17);
+            this.unifrit.Size = new System.Drawing.Size(116, 17);
             this.unifrit.TabIndex = 17;
-            this.unifrit.Text = "选择商品后显示联通时间";
+            this.unifrit.Text = "选择商品后显示时间";
             // 
             // manualrushb
             // 
-            this.manualrushb.Location = new System.Drawing.Point(152, 164);
+            this.manualrushb.Location = new System.Drawing.Point(738, 329);
             this.manualrushb.Name = "manualrushb";
-            this.manualrushb.Size = new System.Drawing.Size(50, 82);
+            this.manualrushb.Size = new System.Drawing.Size(62, 79);
             this.manualrushb.TabIndex = 5;
-            this.manualrushb.Text = "手动抢购";
+            this.manualrushb.Text = "手动\r\n抢购";
             this.manualrushb.UseVisualStyleBackColor = true;
             this.manualrushb.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Manualrush_MouseDown);
             // 
@@ -208,7 +217,7 @@ namespace Unifri
             // unifrietl
             // 
             this.unifrietl.AutoSize = true;
-            this.unifrietl.Location = new System.Drawing.Point(0, 196);
+            this.unifrietl.Location = new System.Drawing.Point(2, 224);
             this.unifrietl.Name = "unifrietl";
             this.unifrietl.Size = new System.Drawing.Size(83, 17);
             this.unifrietl.TabIndex = 18;
@@ -216,15 +225,15 @@ namespace Unifri
             // 
             // unifriett
             // 
-            this.unifriett.Location = new System.Drawing.Point(89, 193);
+            this.unifriett.Location = new System.Drawing.Point(91, 221);
             this.unifriett.Name = "unifriett";
-            this.unifriett.Size = new System.Drawing.Size(54, 23);
+            this.unifriett.Size = new System.Drawing.Size(113, 23);
             this.unifriett.TabIndex = 6;
             // 
             // unifriftimel
             // 
             this.unifriftimel.AutoSize = true;
-            this.unifriftimel.Location = new System.Drawing.Point(0, 226);
+            this.unifriftimel.Location = new System.Drawing.Point(2, 254);
             this.unifriftimel.Name = "unifriftimel";
             this.unifriftimel.Size = new System.Drawing.Size(83, 17);
             this.unifriftimel.TabIndex = 19;
@@ -232,14 +241,14 @@ namespace Unifri
             // 
             // unifriftimet
             // 
-            this.unifriftimet.Location = new System.Drawing.Point(89, 223);
+            this.unifriftimet.Location = new System.Drawing.Point(91, 251);
             this.unifriftimet.Name = "unifriftimet";
-            this.unifriftimet.Size = new System.Drawing.Size(54, 23);
+            this.unifriftimet.Size = new System.Drawing.Size(113, 23);
             this.unifriftimet.TabIndex = 7;
             // 
             // autorushb
             // 
-            this.autorushb.Location = new System.Drawing.Point(3, 317);
+            this.autorushb.Location = new System.Drawing.Point(5, 385);
             this.autorushb.Name = "autorushb";
             this.autorushb.Size = new System.Drawing.Size(140, 23);
             this.autorushb.TabIndex = 10;
@@ -249,7 +258,7 @@ namespace Unifri
             // 
             // stopautob
             // 
-            this.stopautob.Location = new System.Drawing.Point(152, 317);
+            this.stopautob.Location = new System.Drawing.Point(154, 385);
             this.stopautob.Name = "stopautob";
             this.stopautob.Size = new System.Drawing.Size(50, 23);
             this.stopautob.TabIndex = 11;
@@ -262,39 +271,21 @@ namespace Unifri
             this.bggetunifritime.WorkerSupportsCancellation = true;
             this.bggetunifritime.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BGGunifritime_DoWork);
             // 
-            // serverccb
+            // noticcb
             // 
-            this.serverccb.AutoSize = true;
-            this.serverccb.Location = new System.Drawing.Point(3, 254);
-            this.serverccb.Name = "serverccb";
-            this.serverccb.Size = new System.Drawing.Size(172, 21);
-            this.serverccb.TabIndex = 8;
-            this.serverccb.Text = "勾选开启Server酱推送通知";
-            this.serverccb.UseVisualStyleBackColor = true;
-            // 
-            // servercsckeyt
-            // 
-            this.servercsckeyt.Location = new System.Drawing.Point(3, 278);
-            this.servercsckeyt.Name = "servercsckeyt";
-            this.servercsckeyt.Size = new System.Drawing.Size(199, 23);
-            this.servercsckeyt.TabIndex = 9;
-            // 
-            // servercweb
-            // 
-            this.servercweb.AutoSize = true;
-            this.servercweb.Location = new System.Drawing.Point(15, 351);
-            this.servercweb.Name = "servercweb";
-            this.servercweb.Size = new System.Drawing.Size(187, 17);
-            this.servercweb.TabIndex = 12;
-            this.servercweb.TabStop = true;
-            this.servercweb.Text = "Server酱教程:http://sc.ftqq.com";
-            this.servercweb.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.Servercweb_LinkClicked);
+            this.noticcb.AutoSize = true;
+            this.noticcb.Location = new System.Drawing.Point(5, 302);
+            this.noticcb.Name = "noticcb";
+            this.noticcb.Size = new System.Drawing.Size(123, 21);
+            this.noticcb.TabIndex = 8;
+            this.noticcb.Text = "勾选开启推送通知";
+            this.noticcb.UseVisualStyleBackColor = true;
             // 
             // getcookieb
             // 
             this.getcookieb.Location = new System.Drawing.Point(738, 254);
             this.getcookieb.Name = "getcookieb";
-            this.getcookieb.Size = new System.Drawing.Size(62, 114);
+            this.getcookieb.Size = new System.Drawing.Size(62, 69);
             this.getcookieb.TabIndex = 22;
             this.getcookieb.Text = "获取Cookie";
             this.getcookieb.UseVisualStyleBackColor = true;
@@ -313,19 +304,121 @@ namespace Unifri
             // 
             // timeoutt
             // 
-            this.timeoutt.Location = new System.Drawing.Point(89, 164);
+            this.timeoutt.Location = new System.Drawing.Point(91, 192);
             this.timeoutt.Name = "timeoutt";
-            this.timeoutt.Size = new System.Drawing.Size(54, 23);
+            this.timeoutt.Size = new System.Drawing.Size(113, 23);
             this.timeoutt.TabIndex = 23;
             // 
             // timeoutl
             // 
             this.timeoutl.AutoSize = true;
-            this.timeoutl.Location = new System.Drawing.Point(1, 167);
+            this.timeoutl.Location = new System.Drawing.Point(2, 195);
             this.timeoutl.Name = "timeoutl";
             this.timeoutl.Size = new System.Drawing.Size(83, 17);
             this.timeoutl.TabIndex = 24;
             this.timeoutl.Text = "网络超时毫秒:";
+            // 
+            // acIdl
+            // 
+            this.acIdl.AutoSize = true;
+            this.acIdl.Location = new System.Drawing.Point(3, 6);
+            this.acIdl.Name = "acIdl";
+            this.acIdl.Size = new System.Drawing.Size(36, 17);
+            this.acIdl.TabIndex = 25;
+            this.acIdl.Text = "acId:";
+            // 
+            // acIdt
+            // 
+            this.acIdt.Location = new System.Drawing.Point(60, 3);
+            this.acIdt.Name = "acIdt";
+            this.acIdt.Size = new System.Drawing.Size(144, 23);
+            this.acIdt.TabIndex = 26;
+            // 
+            // workwxr
+            // 
+            this.workwxr.AutoSize = true;
+            this.workwxr.Location = new System.Drawing.Point(5, 329);
+            this.workwxr.Name = "workwxr";
+            this.workwxr.Size = new System.Drawing.Size(74, 21);
+            this.workwxr.TabIndex = 27;
+            this.workwxr.Text = "企业微信";
+            this.workwxr.UseVisualStyleBackColor = true;
+            this.workwxr.CheckedChanged += new System.EventHandler(this.Workwxr_CheckedChanged);
+            // 
+            // barkr
+            // 
+            this.barkr.AutoSize = true;
+            this.barkr.Location = new System.Drawing.Point(75, 329);
+            this.barkr.Name = "barkr";
+            this.barkr.Size = new System.Drawing.Size(53, 21);
+            this.barkr.TabIndex = 28;
+            this.barkr.Text = "Bark";
+            this.barkr.UseVisualStyleBackColor = true;
+            this.barkr.CheckedChanged += new System.EventHandler(this.Barkr_CheckedChanged);
+            // 
+            // dingtalkr
+            // 
+            this.dingtalkr.AutoSize = true;
+            this.dingtalkr.Location = new System.Drawing.Point(123, 329);
+            this.dingtalkr.Name = "dingtalkr";
+            this.dingtalkr.Size = new System.Drawing.Size(86, 21);
+            this.dingtalkr.TabIndex = 29;
+            this.dingtalkr.Text = "钉钉机器人";
+            this.dingtalkr.UseVisualStyleBackColor = true;
+            this.dingtalkr.CheckedChanged += new System.EventHandler(this.Dingtalkr_CheckedChanged);
+            // 
+            // idorkeyt
+            // 
+            this.idorkeyt.Location = new System.Drawing.Point(5, 356);
+            this.idorkeyt.Name = "idorkeyt";
+            this.idorkeyt.Size = new System.Drawing.Size(198, 23);
+            this.idorkeyt.TabIndex = 30;
+            // 
+            // blockrushcb
+            // 
+            this.blockrushcb.AutoSize = true;
+            this.blockrushcb.Location = new System.Drawing.Point(5, 280);
+            this.blockrushcb.Name = "blockrushcb";
+            this.blockrushcb.Size = new System.Drawing.Size(99, 21);
+            this.blockrushcb.TabIndex = 31;
+            this.blockrushcb.Text = "黑号是否继续";
+            this.blockrushcb.UseVisualStyleBackColor = true;
+            // 
+            // captchacb
+            // 
+            this.captchacb.AutoSize = true;
+            this.captchacb.Location = new System.Drawing.Point(105, 280);
+            this.captchacb.Name = "captchacb";
+            this.captchacb.Size = new System.Drawing.Size(99, 21);
+            this.captchacb.TabIndex = 32;
+            this.captchacb.Text = "半黑是否验证";
+            this.captchacb.UseVisualStyleBackColor = true;
+            // 
+            // noticpatht
+            // 
+            this.noticpatht.Location = new System.Drawing.Point(123, 300);
+            this.noticpatht.Name = "noticpatht";
+            this.noticpatht.Size = new System.Drawing.Size(81, 23);
+            this.noticpatht.TabIndex = 33;
+            // 
+            // bgsetcheck
+            // 
+            this.bgsetcheck.WorkerSupportsCancellation = true;
+            this.bgsetcheck.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BGsetcheck_DoWork);
+            // 
+            // unifriCaptcha1
+            // 
+            this.unifriCaptcha1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.unifriCaptcha1.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.unifriCaptcha1.Httpors = null;
+            this.unifriCaptcha1.Location = new System.Drawing.Point(385, 90);
+            this.unifriCaptcha1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.unifriCaptcha1.Name = "unifriCaptcha1";
+            this.unifriCaptcha1.Size = new System.Drawing.Size(170, 82);
+            this.unifriCaptcha1.TabIndex = 35;
+            this.unifriCaptcha1.UnifriappId = null;
+            this.unifriCaptcha1.Unifricookie = null;
+            this.unifriCaptcha1.Visible = false;
             // 
             // unifriLoginUC1
             // 
@@ -335,41 +428,34 @@ namespace Unifri
             this.unifriLoginUC1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.unifriLoginUC1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.unifriLoginUC1.Httpors = null;
-            this.unifriLoginUC1.Location = new System.Drawing.Point(322, 50);
+            this.unifriLoginUC1.Location = new System.Drawing.Point(322, 71);
             this.unifriLoginUC1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.unifriLoginUC1.Name = "unifriLoginUC1";
-            this.unifriLoginUC1.Size = new System.Drawing.Size(287, 130);
-            this.unifriLoginUC1.TabIndex = 25;
+            this.unifriLoginUC1.Size = new System.Drawing.Size(287, 125);
+            this.unifriLoginUC1.TabIndex = 34;
             this.unifriLoginUC1.Visible = false;
-            // 
-            // unifriCaptcha1
-            // 
-            this.unifriCaptcha1.BackColor = System.Drawing.Color.White;
-            this.unifriCaptcha1.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.unifriCaptcha1.Httpors = null;
-            this.unifriCaptcha1.Location = new System.Drawing.Point(385, 75);
-            this.unifriCaptcha1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.unifriCaptcha1.Name = "unifriCaptcha1";
-            this.unifriCaptcha1.Size = new System.Drawing.Size(168, 80);
-            this.unifriCaptcha1.TabIndex = 26;
-            this.unifriCaptcha1.UnifriappId = null;
-            this.unifriCaptcha1.Unifricookie = null;
-            this.unifriCaptcha1.Visible = false;
             // 
             // UnifriMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(804, 372);
+            this.ClientSize = new System.Drawing.Size(804, 413);
             this.Controls.Add(this.unifriCaptcha1);
-            this.Controls.Add(this.getcookieb);
             this.Controls.Add(this.unifriLoginUC1);
+            this.Controls.Add(this.getcookieb);
+            this.Controls.Add(this.noticpatht);
+            this.Controls.Add(this.captchacb);
+            this.Controls.Add(this.blockrushcb);
+            this.Controls.Add(this.idorkeyt);
+            this.Controls.Add(this.dingtalkr);
+            this.Controls.Add(this.barkr);
+            this.Controls.Add(this.workwxr);
+            this.Controls.Add(this.acIdt);
+            this.Controls.Add(this.acIdl);
             this.Controls.Add(this.timeoutl);
             this.Controls.Add(this.timeoutt);
-            this.Controls.Add(this.servercweb);
-            this.Controls.Add(this.servercsckeyt);
-            this.Controls.Add(this.serverccb);
+            this.Controls.Add(this.noticcb);
             this.Controls.Add(this.stopautob);
             this.Controls.Add(this.autorushb);
             this.Controls.Add(this.unifriftimet);
@@ -385,7 +471,7 @@ namespace Unifri
             this.Controls.Add(this.getgoodslb);
             this.Controls.Add(this.cookiet);
             this.Controls.Add(this.cookiel);
-            this.Controls.Add(this.phonenumt);
+            this.Controls.Add(this.unifriaccountt);
             this.Controls.Add(this.phonenuml);
             this.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -394,7 +480,7 @@ namespace Unifri
             this.Name = "UnifriMainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "联通星期五";
-            this.Load += new System.EventHandler(this.Form1_Load);
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -403,7 +489,7 @@ namespace Unifri
         #endregion
 
         private System.Windows.Forms.Label phonenuml;
-        private System.Windows.Forms.TextBox phonenumt;
+        private System.Windows.Forms.TextBox unifriaccountt;
         private System.Windows.Forms.Label cookiel;
         private System.Windows.Forms.TextBox cookiet;
         private System.Windows.Forms.Button getgoodslb;
@@ -424,14 +510,22 @@ namespace Unifri
         private System.Windows.Forms.Button autorushb;
         private System.Windows.Forms.Button stopautob;
         private System.ComponentModel.BackgroundWorker bggetunifritime;
-        private System.Windows.Forms.CheckBox serverccb;
-        private System.Windows.Forms.TextBox servercsckeyt;
-        private System.Windows.Forms.LinkLabel servercweb;
+        private System.Windows.Forms.CheckBox noticcb;
         private System.Windows.Forms.Button getcookieb;
         private System.ComponentModel.BackgroundWorker bgunifrirushonce;
         private System.ComponentModel.BackgroundWorker bgunifrirushsuc;
         private System.Windows.Forms.TextBox timeoutt;
         private System.Windows.Forms.Label timeoutl;
+        private System.Windows.Forms.Label acIdl;
+        private System.Windows.Forms.TextBox acIdt;
+        private System.Windows.Forms.RadioButton workwxr;
+        private System.Windows.Forms.RadioButton barkr;
+        private System.Windows.Forms.RadioButton dingtalkr;
+        private System.Windows.Forms.TextBox idorkeyt;
+        private System.Windows.Forms.CheckBox blockrushcb;
+        private System.Windows.Forms.CheckBox captchacb;
+        private System.Windows.Forms.TextBox noticpatht;
+        private System.ComponentModel.BackgroundWorker bgsetcheck;
         private UnifriLoginUC unifriLoginUC1;
         private UnifriCaptcha unifriCaptcha1;
     }
