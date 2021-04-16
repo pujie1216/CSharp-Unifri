@@ -170,7 +170,7 @@ namespace Unifri
                 if (uniloginprd.TryGetValue("list", out Object uniinfolist))
                 {
                     Dictionary<String, Object> uniinfolistd = (Dictionary<String, Object>)((Object[])uniinfolist)[0];
-                    using (StreamWriter streamWriter = new StreamWriter(uniinfolistd["num"] + " unicookie.cookie"))
+                    using (StreamWriter streamWriter = new StreamWriter(uniinfolistd["num"] + " uni.cookie"))
                     {
                         streamWriter.Write(unilogincookie);
                     }
