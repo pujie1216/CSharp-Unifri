@@ -65,14 +65,14 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UnifriCaptcha.cs">
+    <Compile Include="UnifriCaptchaUC.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UnifriCaptcha.Designer.cs">
-      <DependentUpon>UnifriCaptcha.cs</DependentUpon>
+    <Compile Include="UnifriCaptchaUC.Designer.cs">
+      <DependentUpon>UnifriCaptchaUC.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="UnifriCaptcha.resx">
-      <DependentUpon>UnifriCaptcha.cs</DependentUpon>
+    <EmbeddedResource Include="UnifriCaptchaUC.resx">
+      <DependentUpon>UnifriCaptchaUC.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UnifriLoginUC.resx">
       <DependentUpon>UnifriLoginUC.cs</DependentUpon>
