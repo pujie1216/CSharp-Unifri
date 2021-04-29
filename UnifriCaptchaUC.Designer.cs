@@ -1,7 +1,7 @@
 ﻿
 namespace Unifri
 {
-    partial class UnifriCaptcha
+    partial class UnifriCaptchaUC
     {
         /// <summary> 
         /// 必需的设计器变量。
@@ -41,7 +41,7 @@ namespace Unifri
             this.captchap.Location = new System.Drawing.Point(93, 42);
             this.captchap.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.captchap.Name = "captchap";
-            this.captchap.Size = new System.Drawing.Size(70, 30);
+            this.captchap.Size = new System.Drawing.Size(120, 30);
             this.captchap.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.captchap.TabIndex = 0;
             this.captchap.TabStop = false;
@@ -60,7 +60,7 @@ namespace Unifri
             this.captchat.Location = new System.Drawing.Point(93, 11);
             this.captchat.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.captchat.Name = "captchat";
-            this.captchat.Size = new System.Drawing.Size(70, 23);
+            this.captchat.Size = new System.Drawing.Size(120, 23);
             this.captchat.TabIndex = 2;
             // 
             // captchab
@@ -85,7 +85,7 @@ namespace Unifri
             this.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "UnifriCaptcha";
-            this.Size = new System.Drawing.Size(170, 82);
+            this.Size = new System.Drawing.Size(219, 82);
             ((System.ComponentModel.ISupportInitialize)(this.captchap)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

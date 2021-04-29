@@ -8,9 +8,9 @@ using System.Windows.Forms;
 
 namespace Unifri
 {
-    public partial class UnifriCaptcha : UserControl
+    public partial class UnifriCaptchaUC : UserControl
     {
-        public UnifriCaptcha()
+        public UnifriCaptchaUC()
         {
             InitializeComponent();
         }
@@ -47,6 +47,11 @@ namespace Unifri
             {
                 Unifricaptcha();
             }
+            else
+            {
+                captchat.Text = null;
+                captchap.Image = null;
+            }
         }
 
         private void Unifricaptcha()
@@ -62,17 +67,32 @@ namespace Unifri
 
             JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
             Dictionary<String, Object> imageprd = (Dictionary<String, Object>)javaScriptSerializer.DeserializeObject(imagepr);
-            String imageUrl = imageprd["imageUrl"].ToString().Replace("\\", "");
-            Stream images = HttpWebGet(imageUrl);
+            if (imageprd.TryGetValue("imageUrl", out Object imguobject))
+            {
+                String imageUrl = imguobject.ToString().Replace("\\", "");
+                Stream images = HttpWebGet(imageUrl);
 
-            captchap.Image = new Bitmap(images);
+                captchap.Image = new Bitmap(images);
+            }
+            else
+            {
+                captchat.Text = "无法获取验证码了";
+                captchab.Text = "关闭";
+            }
         }
 
         private void Captchab_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
-                Captchab_Click();
+                if (captchab.Text == "关闭")
+                {
+                    Visible = false;
+                }
+                else
+                {
+                    Captchab_Click();
+                }
             }
         }
 
@@ -92,8 +112,6 @@ namespace Unifri
             if (riskprd.TryGetValue("token", out _))
             {
                 MessageBox.Show("号码已正常,可以继续抢购了", "提示");
-                captchat.Text = null;
-                captchap.Image = null;
                 Visible = false;
             }
             else
