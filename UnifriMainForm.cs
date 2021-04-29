@@ -39,7 +39,7 @@ namespace Unifri
                 else
                 {
                     MessageBox.Show("联通星期五.set的行数不对哦", "提示");
-                    acIdt.Text = "Paste the acId";
+                    acIdt.Text = "auto";
                     cookiet.Text = "Paste the Cookie";
                     unifriaccountt.Text = "Unifri1";
                     noticpatht.Text = ".";
@@ -47,7 +47,7 @@ namespace Unifri
             }
             else
             {
-                acIdt.Text = "Paste the acId";
+                acIdt.Text = "auto";
                 cookiet.Text = "Paste the Cookie";
                 unifriaccountt.Text = "Unifri1";
                 noticpatht.Text = ".";
@@ -79,7 +79,6 @@ namespace Unifri
             {
                 idorkeyt.Text = "没有 notic.set 文件,自行填写对应选择的所需ID或Key哦";
             }
-            unifriaccountt.Text = "Unifri1";
             timeoutt.Text = "2000";
             unifriett.Text = "0";
             unifriftimet.Text = "5000";
@@ -255,6 +254,16 @@ namespace Unifri
                 {50,"待支付"},
                 {60,"处理中"}
             };
+
+                //自动获取acId
+                if (acIdt.Text == "auto")
+                {
+                    String unifriacIdp = "m.client.10010.com/h5-web_pro/interface/service_0005_0002";
+                    String data = "{\"id\":\"88888\",\"_su_pass\":\"_sunc_vl\"}";
+                    String unifriacIdpr = Urlresp(unifriacIdp, data, null, 5000);
+                    String unifriacId = Regex.Match(unifriacIdpr, "activityNumber.{5}(.*?\\d+)", RegexOptions.IgnoreCase).Groups[1].Value;
+                    acIdt.Text = unifriacId;
+                }
 
                 //访问活动页面
                 String unifrigoodsp = "m.client.10010.com/welfare-mall-front-activity/super/five/get619Activity/v1?acId=" + acIdt.Text;
