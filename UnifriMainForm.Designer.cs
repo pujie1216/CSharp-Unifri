@@ -67,7 +67,7 @@ namespace Unifri
             this.captchacb = new System.Windows.Forms.CheckBox();
             this.noticpatht = new System.Windows.Forms.TextBox();
             this.bgsetcheck = new System.ComponentModel.BackgroundWorker();
-            this.unifriCaptcha1 = new Unifri.UnifriCaptcha();
+            this.unifriCaptcha1 = new Unifri.UnifriCaptchaUC();
             this.unifriLoginUC1 = new Unifri.UnifriLoginUC();
             this.SuspendLayout();
             // 
@@ -411,10 +411,10 @@ namespace Unifri
             this.unifriCaptcha1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.unifriCaptcha1.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.unifriCaptcha1.Httpors = null;
-            this.unifriCaptcha1.Location = new System.Drawing.Point(385, 90);
+            this.unifriCaptcha1.Location = new System.Drawing.Point(359, 90);
             this.unifriCaptcha1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.unifriCaptcha1.Name = "unifriCaptcha1";
-            this.unifriCaptcha1.Size = new System.Drawing.Size(170, 82);
+            this.unifriCaptcha1.Size = new System.Drawing.Size(220, 80);
             this.unifriCaptcha1.TabIndex = 35;
             this.unifriCaptcha1.UnifriappId = null;
             this.unifriCaptcha1.Unifricookie = null;
@@ -527,7 +527,7 @@ namespace Unifri
         private System.Windows.Forms.TextBox noticpatht;
         private System.ComponentModel.BackgroundWorker bgsetcheck;
         private UnifriLoginUC unifriLoginUC1;
-        private UnifriCaptcha unifriCaptcha1;
+        private UnifriCaptchaUC unifriCaptcha1;
     }
 }
 
